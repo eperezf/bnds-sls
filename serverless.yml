@@ -1,0 +1,137 @@
+# BNDS API
+
+service: bnds
+app: bnds
+useDotenv: true
+frameworkVersion: '2'
+
+# Provider configuration
+provider:
+  name: aws
+  runtime: nodejs12.x
+  lambdaHashingVersion: 20201221
+  stage: ${opt:stage, self:custom.defaultStage}
+
+  # Environment variables
+  environment:
+    NODE_ENV: ${self:provider.stage}
+    DYNAMODB_ENDPOINT: ${self:custom.dynamoEndpoint.${opt:stage, self:custom.defaultStage}}
+
+  # Usage roles
+  iamRoleStatements:
+    - Effect: "Allow"
+      Action:
+        - dynamodb:*
+      Resource: "*"
+
+custom:
+  defaultStage: offline
+
+  # Local DynamoDB config
+  dynamodb:
+    stages:
+      - offline
+    start:
+      migrate: true
+      inMemory: false
+
+  # Endpoints configuration
+  # TODO: Set prod authorizer to main pool
+  dynamoEndpoint:
+    prod: https://dynamodb.us-east-1.amazonaws.com
+    dev: https://dynamodb.us-east-1.amazonaws.com
+    staging: https://dynamodb.us-east-1.amazonaws.com
+    offline: http://localhost:8000
+
+functions:
+  hello:
+    handler: handler.hello
+
+# Resources
+resources:
+  Resources:
+    ## DYNAMODB TABLES
+    # Settings table
+    settingsTable:
+      Type: AWS::DynamoDB::Table
+      DeletionPolicy: Retain
+      Properties:
+        TableName: settings-${opt:stage, self:custom.defaultStage}
+        AttributeDefinitions:
+          - AttributeName: PK
+            AttributeType: S
+          - AttributeName: SK
+            AttributeType: S
+        KeySchema:
+          - AttributeName: PK
+            KeyType: HASH
+          - AttributeName: SK
+            KeyType: RANGE
+        ProvisionedThroughput:
+          ReadCapacityUnits: 5
+          WriteCapacityUnits: 5
+    # Phones table
+    phonesTable:
+      Type: AWS::DynamoDB::Table
+      DeletionPolicy: Retain
+      Properties:
+        TableName: phones-${opt:stage, self:custom.defaultStage}
+        AttributeDefinitions:
+          - AttributeName: PK
+            AttributeType: S
+          - AttributeName: SK
+            AttributeType: S
+        KeySchema:
+          - AttributeName: PK
+            KeyType: HASH
+          - AttributeName: SK
+            KeyType: RANGE
+        ProvisionedThroughput:
+          ReadCapacityUnits: 5
+          WriteCapacityUnits: 5
+    # Operator table
+    operatorsTable:
+      Type: AWS::DynamoDB::Table
+      DeletionPolicy: Retain
+      Properties:
+        TableName: operators-${opt:stage, self:custom.defaultStage}
+        AttributeDefinitions:
+          - AttributeName: PK
+            AttributeType: S
+          - AttributeName: SK
+            AttributeType: S
+        KeySchema:
+          - AttributeName: PK
+            KeyType: HASH
+          - AttributeName: SK
+            KeyType: RANGE
+        ProvisionedThroughput:
+          ReadCapacityUnits: 5
+          WriteCapacityUnits: 5
+    # Users table
+    usersTable:
+      Type: AWS::DynamoDB::Table
+      DeletionPolicy: Retain
+      Properties:
+        TableName: users-${opt:stage, self:custom.defaultStage}
+        AttributeDefinitions:
+          - AttributeName: PK
+            AttributeType: S
+          - AttributeName: SK
+            AttributeType: S
+        KeySchema:
+          - AttributeName: PK
+            KeyType: HASH
+          - AttributeName: SK
+            KeyType: RANGE
+        ProvisionedThroughput:
+          ReadCapacityUnits: 5
+          WriteCapacityUnits: 5
+
+    ## COGNITO USER POOLS
+
+
+plugins:
+  - serverless-dynamodb-local
+  - serverless-offline
+  - serverless-offline-dotenv

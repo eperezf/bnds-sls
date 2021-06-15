@@ -1,0 +1,32 @@
+{
+  "name": "bnds-sls",
+  "version": "0.1.0",
+  "description": "bnds-sls",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/eperezf/bnds-sls.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/eperezf/bnds-sls/issues"
+  },
+  "homepage": "https://github.com/eperezf/bnds-sls#readme",
+  "dependencies": {
+    "@aws-sdk/client-dynamodb": "^3.15.0",
+    "@aws-sdk/lib-dynamodb": "^3.15.0"
+  },
+  "devDependencies": {
+    "serverless-dynamodb-local": "^0.2.39",
+    "serverless-offline": "^7.0.0",
+    "serverless-offline-dotenv": "^0.3.0"
+  },
+  "jshintConfig": {
+    "esversion": 8,
+    "node": true
+  }
+}
