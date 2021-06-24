@@ -60,16 +60,6 @@ functions:
           path: phone
           cors: true
 
-  # /settings/bootstrapSettings
-  # Bootstrap the settings table with basic data
-  bootstrapSettings:
-    handler: src/settings/post.bootstrapSettings
-    events:
-      - http:
-          method: post
-          path: settings/bootstrap
-          cors: true
-
 # Resources
 resources:
   Resources:
