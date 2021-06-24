@@ -36,7 +36,6 @@ custom:
       inMemory: false
 
   # Endpoints configuration
-  # TODO: Set prod authorizer to main pool
   dynamoEndpoint:
     prod: https://dynamodb.us-east-1.amazonaws.com
     dev: https://dynamodb.us-east-1.amazonaws.com
@@ -44,8 +43,32 @@ custom:
     offline: http://localhost:8000
 
 functions:
-  hello:
-    handler: handler.hello
+  # /phone
+  # Get a phone data
+  getPhoneData:
+    handler: src/phone/get.getPhoneData
+    events:
+      - http:
+          method: get
+          path: phone
+          cors: true
+  createPhone:
+    handler: src/phone/post.createPhone
+    events:
+      - http:
+          method: post
+          path: phone
+          cors: true
+
+  # /settings/bootstrapSettings
+  # Bootstrap the settings table with basic data
+  bootstrapSettings:
+    handler: src/settings/post.bootstrapSettings
+    events:
+      - http:
+          method: post
+          path: settings/bootstrap
+          cors: true
 
 # Resources
 resources:
@@ -129,7 +152,6 @@ resources:
           WriteCapacityUnits: 5
 
     ## COGNITO USER POOLS
-
 
 plugins:
   - serverless-dynamodb-local
