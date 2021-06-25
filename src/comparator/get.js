@@ -179,9 +179,9 @@ module.exports.compare = async (event) => {
   }
   else {
     // Take the first variant
-    resultData.variant = resultData.variants.variant;
-    resultData.technologies = resultData.variants.technologies;
-    resultData.frequencies = resultData.variants.frequencies;
+    resultData.variant = resultData.variants[0];
+    resultData.technologies = resultData.variants[0].technologies;
+    resultData.frequencies = resultData.variants[0].frequencies;
     delete resultData.variants;
   }
   console.log(resultData);
