@@ -12,7 +12,7 @@ module.exports.bootstrapSettings = async (event) => {
   var error = false;
 
   // Configure DynamoDB
-  const tableName = "settings-"+process.env.NODE_ENV;
+  var tableName = "settings-"+process.env.NODE_ENV;
   const client = new DynamoDBClient({region: "us-east-1", endpoint: process.env.DYNAMODB_ENDPOINT});
   const docClient = DynamoDBDocument.from(client);
 
@@ -209,6 +209,23 @@ module.exports.bootstrapSettings = async (event) => {
     }
   }
 
+  // Operators list
+  tableName = "operators-"+process.env.NODE_ENV;
+  params = {
+    TableName: tableName,
+    Item: {
+      PK: "OPERATORS",
+      SK: "LIST",
+      list: [],
+    }
+  };
+  try {
+    var opData = await docClient.put(params);
+  } catch (e) {
+    console.log(e);
+    error = true;
+    message = e;
+  }
 
   // Return the data
   return {

@@ -17,18 +17,20 @@ module.exports.getOperators = async (event) => {
 
 
     var params = {
-      TableName: tableName
+      TableName: tableName,
+      Key: {
+        "PK": "OPERATORS",
+        "SK": "LIST"
+      }
     };
     var resultData;
     try {
-      resultData = await docClient.scan(params);
+      resultData = await docClient.get(params);
     } catch (e) {
       console.log(e);
       status = 500;
       message = e;
     }
-    console.log(resultData.Items);
-
   // Return the data
   return {
     statusCode: status,
@@ -37,7 +39,7 @@ module.exports.getOperators = async (event) => {
     },
     body: JSON.stringify(
       {
-        operators: resultData.Items,
+        operators: resultData.Item.list,
         message: message
       },
       null,

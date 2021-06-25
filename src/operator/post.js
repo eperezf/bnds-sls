@@ -17,25 +17,48 @@ module.exports.createOperator = async (event) => {
   const client = new DynamoDBClient({region: "us-east-1", endpoint: process.env.DYNAMODB_ENDPOINT});
   const docClient = DynamoDBDocument.from(client);
 
-  let params = {
-    TableName: tableName,
-    Item: {
-      PK: data.name,
-      SK: "DATA",
-      imgUrl: data.imgUrl,
-      webUrl: data.webUrl,
-      enabled: data.enabled,
-      frequencies: data.frequencies,
-      technologies: data.technologies
-    }
-  };
+
   try {
+    let params = {
+      TableName: tableName,
+      Item: {
+        PK: data.name,
+        SK: "DATA",
+        imgUrl: data.imgUrl,
+        webUrl: data.webUrl,
+        enabled: data.enabled,
+        frequencies: data.frequencies,
+        technologies: data.technologies
+      }
+    };
     var phoneData = await docClient.put(params);
   } catch (e) {
     console.log(e);
     error = true;
     status = 500;
     message = e;
+  }
+
+  try {
+    let params = {
+      TableName: tableName,
+      Key : {
+        'PK': "OPERATORS",
+        'SK': "LIST"
+      },
+      UpdateExpression: "SET #list = list_append(if_not_exists(#list, :empty), :name)",
+      ExpressionAttributeNames: {
+        "#list": "list"
+      },
+      ExpressionAttributeValues: {
+        ":name": [data.name],
+        ":empty": []
+      }
+    };
+    var listData = await docClient.update(params);
+    console.log(listData);
+  } catch (e) {
+    console.log(e);
   }
 
   // Return the data

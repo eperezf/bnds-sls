@@ -170,8 +170,6 @@ module.exports.autocomplete = async (event) => {
   result.body.hits.hits.forEach((phone, i) => {
     phones.push(phone._source.fullName);
   });
-  console.log(phones);
-
   // Return the data
   return {
     statusCode: status,
