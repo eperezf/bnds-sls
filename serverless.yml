@@ -105,6 +105,15 @@ functions:
           method: post
           path: operator
           cors: true
+  # /comparator
+  # COmpare a phone and an operator
+  compare:
+    handler: src/comparator/get.compare
+    events:
+      - http:
+          method: get
+          path: compare/{phone}/{operator}
+          cors: true
 
 # Resources
 resources:
