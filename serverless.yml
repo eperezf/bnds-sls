@@ -50,7 +50,14 @@ functions:
     events:
       - http:
           method: get
-          path: phone
+          path: phone/{fullName}
+          cors: true
+  autocomplete:
+    handler: src/phone/get.autocomplete
+    events:
+      - http:
+          method: get
+          path: phone/autocomplete/{fullName}
           cors: true
   createPhone:
     handler: src/phone/post.createPhone
@@ -58,6 +65,45 @@ functions:
       - http:
           method: post
           path: phone
+          cors: true
+
+  # /settings/bootstrapSettings
+  # Bootstrap the settings table with basic data
+  bootstrapSettings:
+    handler: src/settings/post.bootstrapSettings
+    events:
+      - http:
+          method: post
+          path: settings/bootstrap
+          cors: true
+
+
+  # /frequency
+  # Get all the frequencies and their respective IDs
+  getFrequencies:
+    handler: src/frequency/get.getFrequencies
+    events:
+      - http:
+          method: get
+          path: frequency
+          cors: true
+
+  # /operator
+  # Get all the operators
+  getOperators:
+    handler: src/operator/get.getOperators
+    events:
+      - http:
+          method: get
+          path: operator
+          cors: true
+  # Get all the operators
+  createOperator:
+    handler: src/operator/post.createOperator
+    events:
+      - http:
+          method: post
+          path: operator
           cors: true
 
 # Resources

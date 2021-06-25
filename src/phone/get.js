@@ -9,7 +9,8 @@ module.exports.getPhoneData = async (event) => {
   var status = 200;
   var message = "ok";
   var skipElastic = false;
-  const data = event.queryStringParameters;
+  const data = event.pathParameters;
+
 
   // Configure DynamoDB
   const tableName = "phones-"+process.env.NODE_ENV;
@@ -35,7 +36,7 @@ module.exports.getPhoneData = async (event) => {
           must: [
             {
               multi_match: {
-                query: data.name,
+                query: data.fullName,
                 type: "bool_prefix",
                 fields: [
                   "fullName",
@@ -43,7 +44,10 @@ module.exports.getPhoneData = async (event) => {
                   "fullName._3gram"
                 ]
               }
-            }
+            },
+            {
+              term: {"enabled": true}
+            },
           ]
         }
       }
@@ -55,7 +59,7 @@ module.exports.getPhoneData = async (event) => {
   var resultData;
   if (phoneData.length > 0) {
     for (var phone of phoneData) {
-      if (phone._source.fullName == data.name) {
+      if (phone._source.fullName == data.fullName) {
         exactMatch = phone._source;
       }
     }
@@ -81,13 +85,21 @@ module.exports.getPhoneData = async (event) => {
       status = 500;
       message = e;
     }
-    if (exactMatch) {
-      resultData.Item.exactMatch = true;
+    if (resultData.Item) {
+      if (exactMatch) {
+        resultData.Item.exactMatch = true;
+      }
+      else {
+        resultData.Item.exactMatch = false;
+      }
+      resultData = resultData.Item;
     }
     else {
-      resultData.Item.exactMatch = false;
+      resultData = {};
+      status = 404;
+      message = "Phone not found";
     }
-    resultData = resultData.Item;
+
   }
   else {
     resultData = {};
@@ -105,6 +117,70 @@ module.exports.getPhoneData = async (event) => {
     body: JSON.stringify(
       {
         phone: resultData,
+        message: message
+      },
+      null,
+      2
+    ),
+  };
+};
+
+module.exports.autocomplete = async (event) => {
+  // Parse and configure claims and data
+  var status = 200;
+  var message = "ok";
+  var skipElastic = false;
+  const data = event.pathParameters;
+  // Configure elasticsearch
+  const client = new Client({
+    node: process.env.ELASTIC_ENDPOINT,
+    auth: {
+      username: process.env.ELASTIC_USERNAME,
+      password: process.env.ELASTIC_PASSWORD
+    }
+  });
+  // Get closest match from Elastic
+  const result = await client.search({
+    index: 'phones',
+    size: 5,
+    body: {
+      query: {
+        bool: {
+          must: [
+            {
+              multi_match: {
+                query: data.fullName,
+                type: "bool_prefix",
+                fields: [
+                  "fullName",
+                  "fullName._2gram",
+                  "fullName._3gram"
+                ]
+              }
+            },
+            {
+              term: {"enabled": true}
+            },
+          ]
+        }
+      }
+    }
+  });
+  var phones = [];
+  result.body.hits.hits.forEach((phone, i) => {
+    phones.push(phone._source.fullName);
+  });
+  console.log(phones);
+
+  // Return the data
+  return {
+    statusCode: status,
+    headers: {
+      "Access-Control-Allow-Origin": "*"
+    },
+    body: JSON.stringify(
+      {
+        phones: phones,
         message: message
       },
       null,
