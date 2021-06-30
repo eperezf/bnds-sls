@@ -14,69 +14,11 @@ module.exports.compare = async (event) => {
   const dynamoClient = new DynamoDBClient({region: "us-east-1", endpoint: process.env.DYNAMODB_ENDPOINT});
   const docClient = DynamoDBDocument.from(dynamoClient);
 
-
-  // Get the frequencies
-  var generations;
-  try {
-    let params = {
-    TableName: "settings-" + process.env.NODE_ENV,
-    Key: {
-      PK: "GENERATIONS",
-      SK: "LIST"
-    }
-  };
-    generations = await docClient.get(params);
-  } catch (e) {
-    console.log(e);
-    status = 500;
-    message = e;
-  }
-  var frequencies = [];
-  for (var generation of generations.Item.list) {
-    let params = {
-      TableName: "settings-" + process.env.NODE_ENV,
-      KeyConditionExpression: "PK = :PK And begins_with(SK, :SK)",
-      ExpressionAttributeValues: {
-        ":PK": "GENERATION#" + generation,
-        ":SK": "FREQUENCY"
-      },
-      ExpressionAttributeNames: {
-        "#name": "name"
-      },
-      ProjectionExpression:"#name,enabled,frequency,SK"
-    };
-    try {
-      let frequency = await docClient.query(params);
-      let gen = {
-        "name": generation,
-        "frequencies": frequency.Items
-      };
-      frequencies.push(gen);
-    } catch (e) {
-      console.log(e);
-    }
-  }
-
-  // Get the technologies
   var technologies;
-  try {
-    let params = {
-    TableName: "settings-" + process.env.NODE_ENV,
-    KeyConditionExpression: "PK = :PK And begins_with(SK, :SK)",
-    ExpressionAttributeValues: {
-      ":PK": "TECHNOLOGIES",
-      ":SK": "TECHNOLOGY#"
-    }
-  };
-    technologies = await docClient.query(params);
-  } catch (e) {
-    console.log(e);
-    status = 500;
-    message = e;
-  }
-  technologies = technologies.Items;
+  var frequencies = [];
 
   // Get the phone
+
   // Configure elasticsearch
   const client = new Client({
     node: process.env.ELASTIC_ENDPOINT,
@@ -155,6 +97,8 @@ module.exports.compare = async (event) => {
     }
     else {
       resultData = {};
+      technologies={};
+      frequencies=[];
       status = 404;
       message = "Phone not found";
     }
@@ -162,31 +106,34 @@ module.exports.compare = async (event) => {
   }
   else {
     resultData = {};
+    technologies={};
+    frequencies=[];
     status = 404;
     message = "Phone not found";
   }
   // Select the correct variant
-  if (resultData.exactMatch) {
-    // Iterate through variants to set the correct one
-    resultData.variants.forEach((variant, i) => {
-      if (variant.variant == exactMatch.variant) {
-        resultData.variant = variant.variant;
-        resultData.technologies = variant.technologies;
-        resultData.frequencies = variant.frequencies;
-      }
-    });
-    delete resultData.variants;
+  if (resultData.variants) {
+    if (resultData.exactMatch) {
+      // Iterate through variants to set the correct one
+      resultData.variants.forEach((variant, i) => {
+        if (variant.variant == exactMatch.variant) {
+          resultData.variant = variant.variant;
+          resultData.technologies = variant.technologies;
+          resultData.frequencies = variant.frequencies;
+        }
+      });
+      delete resultData.variants;
+    }
+    else {
+      // Take the first variant
+      resultData.variant = resultData.variants[0].variant;
+      resultData.technologies = resultData.variants[0].technologies;
+      resultData.frequencies = resultData.variants[0].frequencies;
+      delete resultData.variants;
+    }
   }
-  else {
-    // Take the first variant
-    resultData.variant = resultData.variants[0];
-    resultData.technologies = resultData.variants[0].technologies;
-    resultData.frequencies = resultData.variants[0].frequencies;
-    delete resultData.variants;
-  }
-  console.log(resultData);
 
-  // Get operator data
+  // Get the operator
   var operatorData;
   let opParams = {
     TableName: "operators-" + process.env.NODE_ENV,
@@ -202,43 +149,121 @@ module.exports.compare = async (event) => {
     status = 500;
     message = e;
   }
-  console.log(operatorData.Item);
+  if (!operatorData.Item) {
+    operatorData.Item = {};
+    if (message == "ok") {
+      message = "Operator not found";
+      status = 404;
+    }
+    else {
+      message += ", Operator not found";
+    }
+  }
 
+  // Get the frequencies
+  var generations;
+  try {
+    let params = {
+    TableName: "settings-" + process.env.NODE_ENV,
+    Key: {
+      PK: "GENERATIONS",
+      SK: "LIST"
+    }
+  };
+    generations = await docClient.get(params);
+  } catch (e) {
+    console.log(e);
+    status = 500;
+    message = e;
+  }
 
-  // Set the final comparation array
+  for (var generation of generations.Item.list) {
+    let params = {
+      TableName: "settings-" + process.env.NODE_ENV,
+      KeyConditionExpression: "PK = :PK And begins_with(SK, :SK)",
+      ExpressionAttributeValues: {
+        ":PK": "GENERATION#" + generation,
+        ":SK": "FREQUENCY"
+      },
+      ExpressionAttributeNames: {
+        "#name": "name"
+      },
+      ProjectionExpression:"#name,enabled,frequency,SK"
+    };
+    try {
+      let frequency = await docClient.query(params);
+      let gen = {
+        "name": generation,
+        "frequencies": frequency.Items
+      };
+      frequencies.push(gen);
+    } catch (e) {
+      console.log(e);
+    }
+  }
 
+  // Get the technologies
+  var technologies;
+  try {
+    let params = {
+    TableName: "settings-" + process.env.NODE_ENV,
+    KeyConditionExpression: "PK = :PK And begins_with(SK, :SK)",
+    ExpressionAttributeValues: {
+      ":PK": "TECHNOLOGIES",
+      ":SK": "TECHNOLOGY#"
+    }
+  };
+    technologies = await docClient.query(params);
+  } catch (e) {
+    console.log(e);
+    status = 500;
+    message = e;
+  }
+  technologies = technologies.Items;
+
+  if (status == 404) {
+    technologies = [];
+    frequencies = [];
+  }
+
+  // Compare technologies with smartphone and operator
   technologies.forEach((technology, i) => {
-    // Phone
-    if (resultData.technologies.includes(technology.SK.replace("TECHNOLOGY#",""))) {
-      console.log("TECH PH OK");
+    var id = technology.SK.replace("TECHNOLOGY#","");
+    if (resultData.technologies.includes(id)) {
       technology.phone = true;
     }
     else {
-      console.log("TECH NOT OK");
       technology.phone = false;
     }
-    // Operator
-    if (operatorData.Item.technologies.includes(technology.SK.replace("TECHNOLOGY#",""))) {
-      console.log("TECH OP OK");
+    if (operatorData.Item.technologies.includes(id)) {
       technology.operator = true;
     }
     else {
-      console.log("TECH NOT OK");
       technology.operator = false;
     }
-    delete technology.PK;
-    delete technology.SK;
   });
-  console.log(technologies);
 
-  delete resultData.technologies;
-  delete resultData.frequencies;
-  delete operatorData.Item.technologies;
-  delete operatorData.Item.frequencies;
+  // Compare frequencies with smartphone and operator
+  frequencies.forEach((generation, i) => {
+    console.log(generation);
+    generation.frequencies.forEach((frequency, i) => {
+      var id = frequency.SK.replace("FREQUENCY#","");
+      if (resultData.frequencies.includes(id)) {
+        frequency.phone = true;
+      }
+      else {
+        frequency.phone = false;
+      }
+      if (operatorData.Item.frequencies.includes(id)) {
+        frequency.operator = true;
+      }
+      else {
+        frequency.operator = false;
+      }
 
+    });
 
-
-
+  });
 
   // Return the data
   return {
@@ -249,6 +274,7 @@ module.exports.compare = async (event) => {
     body: JSON.stringify(
       {
         technologies: technologies,
+        frequencies: frequencies,
         operator: operatorData.Item,
         phone: resultData,
         message: message
