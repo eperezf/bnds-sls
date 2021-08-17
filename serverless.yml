@@ -87,6 +87,14 @@ functions:
           method: get
           path: frequency
           cors: true
+  # Create a frequency
+  createFrequency:
+    handler: src/frequency/post.createFrequency
+    events:
+      - http:
+          method: post
+          path: frequency
+          cors: true
 
   # /operator
   # Get all the operators
@@ -97,7 +105,8 @@ functions:
           method: get
           path: operator
           cors: true
-  # Get all the operators
+
+  # Create an operator
   createOperator:
     handler: src/operator/post.createOperator
     events:
@@ -105,14 +114,25 @@ functions:
           method: post
           path: operator
           cors: true
+
   # /comparator
-  # COmpare a phone and an operator
+  # Compare a phone and an operator
   compare:
     handler: src/comparator/get.compare
     events:
       - http:
           method: get
           path: compare/{phone}/{operator}
+          cors: true
+
+  # /frequency
+  # Get all the frequency generations and their IDs
+  getGenerations:
+    handler: src/generation/get.getGenerations
+    events:
+      - http:
+          method: get
+          path: generation
           cors: true
 
 # Resources

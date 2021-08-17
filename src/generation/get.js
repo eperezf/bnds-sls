@@ -2,7 +2,7 @@
 const { DynamoDBDocument, GetCommand } = require("@aws-sdk/lib-dynamodb");
 const { DynamoDBClient} = require("@aws-sdk/client-dynamodb");
 
-module.exports.getFrequencies = async (event) => {
+module.exports.getGenerations = async (event) => {
 
   // Parse and configure claims and data
   var status = 200;
@@ -18,7 +18,7 @@ module.exports.getFrequencies = async (event) => {
   });
   const docClient = DynamoDBDocument.from(dynamoClient);
 
-  var generations;
+  var generationList;
   try {
     let params = {
     TableName: tableName,
@@ -27,23 +27,22 @@ module.exports.getFrequencies = async (event) => {
       SK: "LIST"
     }
   };
-    console.log(process.env.NODE_ENV);
-    console.log(process.env.DYNAMODB_ENDPOINT);
-    generations = await docClient.get(params);
+    generationList = await docClient.get(params);
+    console.log(generationList);
   } catch (e) {
     console.log(e);
     status = 500;
     message = e;
   }
-  var frequencies = [];
-  if (generations.Item) {
-    for (var generation of generations.Item.list) {
+  var generations = [];
+  if (generationList.Item) {
+    for (var generation of generationList.Item.list) {
       let params = {
         TableName: tableName,
         KeyConditionExpression: "PK = :PK And begins_with(SK, :SK)",
         ExpressionAttributeValues: {
           ":PK": "GENERATION#" + generation,
-          ":SK": "FREQUENCY"
+          ":SK": "DATA"
         },
         ExpressionAttributeNames: {
           "#name": "name"
@@ -51,12 +50,9 @@ module.exports.getFrequencies = async (event) => {
         ProjectionExpression:"#name,enabled,frequency,SK"
       };
       try {
-        let frequency = await docClient.query(params);
-        let gen = {
-          "name": generation,
-          "frequencies": frequency.Items
-        };
-        frequencies.push(gen);
+        let gen = await docClient.query(params);
+        delete gen.Items[0].SK;
+        generations.push(gen.Items[0]);
       } catch (e) {
         console.log(e);
       }
@@ -64,7 +60,6 @@ module.exports.getFrequencies = async (event) => {
   }
   else {
   }
-
   // Return the data
   return {
     statusCode: status,
@@ -73,7 +68,7 @@ module.exports.getFrequencies = async (event) => {
     },
     body: JSON.stringify(
       {
-        frequencies: frequencies,
+        generations: generations,
         message: message
       },
       null,
