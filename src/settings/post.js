@@ -37,125 +37,18 @@ module.exports.bootstrapSettings = async (event) => {
     }
   ];
   for (var generation of generations) {
+    generation.id = nanoid(6);
     let params = {
       TableName: tableName,
       Item: {
-        PK: "GENERATION#" + generation.name,
-        SK: "DATA",
+        PK: "GENERATIONS",
+        SK: "GENERATION#"+generation.id,
         name: generation.name,
         enabled: generation.enabled
       }
     };
     try {
       var genData = await docClient.put(params);
-    } catch (e) {
-      console.log(e);
-      error = true;
-      message = e;
-    }
-  }
-
-  // GENERATION LIST
-  let params = {
-    TableName: tableName,
-    Item: {
-      PK: "GENERATIONS",
-      SK: "LIST",
-      list: ["2G","3G","4G","5G"]
-    }
-  };
-  try {
-    var genListData = await docClient.put(params);
-  } catch (e) {
-    console.log(e);
-    error = true;
-    message = e;
-  }
-
-  // FREQUENCIES
-  let frequencies = [
-    {
-      "name": "1900MHz.",
-      "generation": "2G",
-      "frequency": [1900],
-      "enabled": true
-    },
-    {
-      "name": "900MHz.",
-      "generation": "2G",
-      "frequency": [900],
-      "enabled": true
-    },
-    {
-      "name": "850MHz.",
-      "generation": "2G",
-      "frequency": [900],
-      "enabled": true
-    },
-    {
-      "name": "1900MHz.",
-      "generation": "3G",
-      "frequency": [1900],
-      "enabled": true
-    },
-    {
-      "name": "900MHz.",
-      "generation": "3G",
-      "frequency": [900],
-      "enabled": true
-    },
-    {
-      "name": "850MHz.",
-      "generation": "3G",
-      "frequency": [900],
-      "enabled": true
-    },
-    {
-      "name": "1700/2100MHz. (AWS)",
-      "generation": "3G",
-      "frequency": [1700,2100],
-      "enabled": true
-    },
-    {
-      "name": "2600MHz.",
-      "generation": "4G",
-      "frequency": [2600],
-      "enabled": true
-    },
-    {
-      "name": "1900MHz.",
-      "generation": "4G",
-      "frequency": [1900],
-      "enabled": true
-    },
-    {
-      "name": "700MHz.",
-      "generation": "4G",
-      "frequency": [700],
-      "enabled": true
-    },
-    {
-      "name": "1700/2100MHz. (AWS)",
-      "generation": "4G",
-      "frequency": [1700,2100],
-      "enabled": true
-    },
-  ];
-  for (var frequency of frequencies) {
-    let id = nanoid;
-    let params = {
-      TableName: tableName,
-      Item: {
-        PK: "GENERATION#" + frequency.generation,
-        SK: "FREQUENCY#" + nanoid(6),
-        generation: frequency.generation,
-        name: frequency.name,
-        frequency: frequency.frequency,
-        enabled: frequency.enabled
-      }
-    };
-    try {
-      var freqData = await docClient.put(params);
     } catch (e) {
       console.log(e);
       error = true;
@@ -207,24 +100,6 @@ module.exports.bootstrapSettings = async (event) => {
       error = true;
       message = e;
     }
-  }
-
-  // Operators list
-  tableName = "operators-"+process.env.NODE_ENV;
-  params = {
-    TableName: tableName,
-    Item: {
-      PK: "OPERATORS",
-      SK: "LIST",
-      list: [],
-    }
-  };
-  try {
-    var opData = await docClient.put(params);
-  } catch (e) {
-    console.log(e);
-    error = true;
-    message = e;
   }
 
   // Return the data

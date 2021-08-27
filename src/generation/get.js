@@ -2,11 +2,13 @@
 const { DynamoDBDocument, GetCommand } = require("@aws-sdk/lib-dynamodb");
 const { DynamoDBClient} = require("@aws-sdk/client-dynamodb");
 
-module.exports.getGenerations = async (event) => {
+// List all generations
+module.exports.listGenerations = async (event) => {
 
   // Parse and configure claims and data
   var status = 200;
   var message = "ok";
+  var error = false;
 
   // Configure DynamoDB
   const tableName = "settings-"+process.env.NODE_ENV;
@@ -17,48 +19,30 @@ module.exports.getGenerations = async (event) => {
     secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY
   });
   const docClient = DynamoDBDocument.from(dynamoClient);
-
-  var generationList;
-  try {
-    let params = {
+  var generations = [];
+  let params = {
     TableName: tableName,
-    Key: {
-      PK: "GENERATIONS",
-      SK: "LIST"
-    }
+    KeyConditionExpression: "PK = :PK",
+    ExpressionAttributeValues: {
+      ":PK": "GENERATIONS",
+    },
+    ExpressionAttributeNames: {
+      "#name": "name"
+    },
+    ProjectionExpression:"#name,enabled,frequency,SK"
   };
-    generationList = await docClient.get(params);
-    console.log(generationList);
+  try {
+    let gen = await docClient.query(params);
+    generations = gen.Items;
+    for (var generation of generations) {
+      generation.id = generation.SK.replace("GENERATION#","");
+      delete generation.SK;
+    }
   } catch (e) {
     console.log(e);
-    status = 500;
+    error = true;
     message = e;
-  }
-  var generations = [];
-  if (generationList.Item) {
-    for (var generation of generationList.Item.list) {
-      let params = {
-        TableName: tableName,
-        KeyConditionExpression: "PK = :PK And begins_with(SK, :SK)",
-        ExpressionAttributeValues: {
-          ":PK": "GENERATION#" + generation,
-          ":SK": "DATA"
-        },
-        ExpressionAttributeNames: {
-          "#name": "name"
-        },
-        ProjectionExpression:"#name,enabled,frequency,SK"
-      };
-      try {
-        let gen = await docClient.query(params);
-        delete gen.Items[0].SK;
-        generations.push(gen.Items[0]);
-      } catch (e) {
-        console.log(e);
-      }
-    }
-  }
-  else {
+    status = 500;
   }
   // Return the data
   return {
@@ -69,6 +53,67 @@ module.exports.getGenerations = async (event) => {
     body: JSON.stringify(
       {
         generations: generations,
+        message: message
+      },
+      null,
+      2
+    ),
+  };
+};
+
+// Get a generation
+module.exports.getGeneration = async (event) => {
+
+  // Parse and configure claims and data
+  var status = 200;
+  var message = "ok";
+  var error = false;
+
+  // Configure DynamoDB
+  const tableName = "settings-"+process.env.NODE_ENV;
+  const dynamoClient = new DynamoDBClient({
+    region: process.env.DYNAMODB_REGION,
+    endpoint: process.env.DYNAMODB_ENDPOINT,
+    accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY
+  });
+
+  console.log(event.pathParameters.id);
+
+  const docClient = DynamoDBDocument.from(dynamoClient);
+  var generation = {};
+  var params = {
+    TableName: tableName,
+    Key: {
+      "PK": "GENERATIONS",
+      "SK": "GENERATION#" + event.pathParameters.id
+    }
+  };
+  try {
+    let gen = await docClient.get(params);
+    console.log(gen);
+    if (gen.Item) {
+      gen.Item.id = gen.Item.SK.replace("GENERATION#","");
+      delete gen.Item.SK;
+      delete gen.Item.PK;
+    }
+    else {
+      message="Generation not found";
+      status = 404;
+    }
+    generation = gen.Item;
+  } catch (e) {
+    console.log(e);
+  }
+  // Return the data
+  return {
+    statusCode: status,
+    headers: {
+      "Access-Control-Allow-Origin": "*"
+    },
+    body: JSON.stringify(
+      {
+        generation: generation,
         message: message
       },
       null,

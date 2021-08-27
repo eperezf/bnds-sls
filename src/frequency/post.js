@@ -1,7 +1,7 @@
 'use strict';
 const { DynamoDBDocument, GetCommand } = require("@aws-sdk/lib-dynamodb");
 const { DynamoDBClient} = require("@aws-sdk/client-dynamodb");
-const { nanoid } = require('nanoid');
+const nanoid = require ('nanoid');
 
 module.exports.createFrequency = async (event) => {
 
@@ -24,20 +24,32 @@ module.exports.createFrequency = async (event) => {
 
   // Parse body
   let data = JSON.parse(event.body);
+  console.log(data);
   // If some data is empty, reject it (shouldn't happen)
-  if (data.generation == "" || data.name == "") {
-    console.log("GEN OR NAME IS EMPTY");
+  if (data.generation == "" || !data.generation) {
+    console.log("GEN IS EMPTY");
     status = 500;
     error = true;
     message = "El nombre o generación no pueden ser vacíos";
   }
-  else {
+
+  if(data.name == "" || !data.name){
+    console.log("NAME IS EMPTY");
+    status = 500;
+    error = true;
+    message = "El nombre o generación no pueden ser vacíos";
+  }
+
+  if (!error){
     // Add the frequency to the db
     console.log(data);
 
     var frequency = {};
     try {
       let id = nanoid(6);
+      console.log(id);
+      console.log(tableName);
+      console.log(data.generation);
       let params = {
         TableName: tableName,
         Item: {
@@ -56,7 +68,7 @@ module.exports.createFrequency = async (event) => {
       status = 500;
     }
   }
-  
+
   // Return the data
   return {
     statusCode: status,

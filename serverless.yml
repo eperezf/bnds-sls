@@ -79,7 +79,17 @@ functions:
 
 
   # /frequency
-  # Get all the frequencies and their respective IDs
+
+  # CREATE a frequency
+  createFrequency:
+    handler: src/frequency/post.createFrequency
+    events:
+      - http:
+          method: post
+          path: frequency
+          cors: true
+
+  # READ all the frequencies and their respective IDs
   getFrequencies:
     handler: src/frequency/get.getFrequencies
     events:
@@ -87,13 +97,32 @@ functions:
           method: get
           path: frequency
           cors: true
-  # Create a frequency
-  createFrequency:
-    handler: src/frequency/post.createFrequency
+
+  # READ a specific frequency
+  getFrequency:
+    handler: src/frequency/get.getFrequency
     events:
       - http:
-          method: post
-          path: frequency
+          method: get
+          path: frequency/{id}
+          cors: true
+
+  # UPDATE a specific frequency
+  updateFrequency:
+    handler: src/frequency/put.updateFrequency
+    events:
+      - http:
+          method: put
+          path: frequency/{id}
+          cors: true
+
+  # DELETE a specific frequency
+  deleteFrequency:
+    handler: src/frequency/delete.deleteFrequency
+    events:
+      - http:
+          method: delete
+          path: frequency/{id}
           cors: true
 
   # /operator
@@ -125,14 +154,50 @@ functions:
           path: compare/{phone}/{operator}
           cors: true
 
-  # /frequency
-  # Get all the frequency generations and their IDs
-  getGenerations:
-    handler: src/generation/get.getGenerations
+  # /generation
+  # List all the generations
+
+  listGenerations:
+    handler: src/generation/get.listGenerations
     events:
       - http:
           method: get
           path: generation
+          cors: true
+  # Get a generation
+  getGeneration:
+    handler: src/generation/get.getGeneration
+    events:
+      - http:
+          method: get
+          path: generation/{id}
+          cors: true
+
+  # Create a generation
+  createGeneration:
+    handler: src/generation/post.createGeneration
+    events:
+      - http:
+          method: post
+          path: generation
+          cors: true
+
+  # Update a generation
+  updateGeneration:
+    handler: src/generation/put.updateGeneration
+    events:
+      - http:
+          method: put
+          path: generation/{id}
+          cors: true
+
+  # Delete a generation
+  deleteGeneration:
+    handler: src/generation/delete.deleteGeneration
+    events:
+      - http:
+          method: delete
+          path: generation/{id}
           cors: true
 
 # Resources
