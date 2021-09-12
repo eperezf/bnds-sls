@@ -3,8 +3,8 @@ const { DynamoDBDocument, GetCommand } = require("@aws-sdk/lib-dynamodb");
 const { DynamoDBClient} = require("@aws-sdk/client-dynamodb");
 const nanoid = require ('nanoid');
 
-// Update a generation
-module.exports.updateGeneration = async (event) => {
+// Update a technology
+module.exports.updateTechnology = async (event) => {
 
   // Parse and configure claims and data
   var status = 200;
@@ -27,14 +27,14 @@ module.exports.updateGeneration = async (event) => {
     let params = {
       TableName: tableName,
       Key: {
-        PK: "GENERATIONS",
-        SK: "GENERATION#" + id
+        PK: "TECHNOLOGIES",
+        SK: "TECHNOLOGY#" + id
       },
       UpdateExpression: "set #enabled = :enabled, #name = :name",
       ExpressionAttributeValues: {
         ":enabled": data.enabled,
         ":name": data.name,
-        ":id": "GENERATION#" + id
+        ":id": "TECHNOLOGY#" + id
       },
       ExpressionAttributeNames: {
         "#enabled": "enabled",
@@ -44,12 +44,12 @@ module.exports.updateGeneration = async (event) => {
       ConditionExpression:"SK=:id",
       RemoveUndefinedValues: "TRUE"
     };
-    var generationUpdate = await docClient.update(params);
-    result = generationUpdate;
+    var technologyUpdate = await docClient.update(params);
+    result = technologyUpdate;
   } catch (e) {
     console.log(e);
     if (e.name == "ConditionalCheckFailedException") {
-      message = "Generation not found";
+      message = "Technology not found";
       status = 404;
       error = true;
     }

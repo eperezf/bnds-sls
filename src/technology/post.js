@@ -3,8 +3,8 @@ const { DynamoDBDocument, GetCommand } = require("@aws-sdk/lib-dynamodb");
 const { DynamoDBClient} = require("@aws-sdk/client-dynamodb");
 const nanoid = require ('nanoid');
 
-// Create a generation
-module.exports.createGeneration = async (event) => {
+// Create a technology
+module.exports.createTechnology = async (event) => {
 
   // Parse and configure claims and data
   var status = 200;
@@ -25,8 +25,8 @@ module.exports.createGeneration = async (event) => {
   let params = {
     TableName: tableName,
     Item: {
-      PK: "GENERATIONS",
-      SK: "GENERATION#"+nanoid(6),
+      PK: "TECHNOLOGIES",
+      SK: "TECHNOLOGY#"+nanoid(6),
       name: data.name,
       enabled: data.enabled
     }

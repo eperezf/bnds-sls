@@ -4,7 +4,7 @@ const { DynamoDBClient} = require("@aws-sdk/client-dynamodb");
 const nanoid = require ('nanoid');
 
 // Create a generation
-module.exports.createGeneration = async (event) => {
+module.exports.deleteTechnology = async (event) => {
 
   // Parse and configure claims and data
   var status = 200;
@@ -20,27 +20,51 @@ module.exports.createGeneration = async (event) => {
     secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY
   });
   const docClient = DynamoDBDocument.from(dynamoClient);
-  console.log(event);
-  var data = JSON.parse(event.body);
-  let params = {
+  var genData = {};
+
+  // First check if the Technology exists
+  var technology = {};
+  var params = {
     TableName: tableName,
-    Item: {
-      PK: "GENERATIONS",
-      SK: "GENERATION#"+nanoid(6),
-      name: data.name,
-      enabled: data.enabled
+    Key: {
+      "PK": "TECHNOLOGIES",
+      "SK": "TECHNOLOGY#" + event.pathParameters.id
     }
   };
-  var genData = {};
   try {
-    genData = await docClient.put(params);
+    let gen = await docClient.get(params);
+    if (gen.Item) {
+      gen.Item.id = gen.Item.SK.replace("TECHNOLOGY#","");
+      delete gen.Item.SK;
+      delete gen.Item.PK;
+    }
+    else {
+      message="Technology not found";
+      status = 404;
+    }
+    technology = gen.Item;
   } catch (e) {
     console.log(e);
-    error = true;
-    status = 500;
-    message = e;
   }
 
+  // If it exists, delete it.
+  if (status == 200) {
+    try {
+      let params = {
+        TableName: tableName,
+        Key: {
+          PK: "TECHNOLOGIES",
+          SK: "TECHNOLOGY#" + event.pathParameters.id
+        }
+      };
+      var technologyDelete = await docClient.delete(params);
+      var result = technologyDelete;
+    } catch (e) {
+      message = e;
+      status = 500;
+      error = true;
+    }
+  }
   // Return the data
   return {
     statusCode: status,
@@ -49,7 +73,7 @@ module.exports.createGeneration = async (event) => {
     },
     body: JSON.stringify(
       {
-        result: genData,
+        result: result,
         message: message
       },
       null,

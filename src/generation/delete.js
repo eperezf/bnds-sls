@@ -20,8 +20,51 @@ module.exports.deleteGeneration = async (event) => {
     secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY
   });
   const docClient = DynamoDBDocument.from(dynamoClient);
-  
+  var genData = {};
 
+  // First check if the Generation exists
+  var generation = {};
+  var params = {
+    TableName: tableName,
+    Key: {
+      "PK": "GENERATIONS",
+      "SK": "GENERATION#" + event.pathParameters.id
+    }
+  };
+  try {
+    let gen = await docClient.get(params);
+    if (gen.Item) {
+      gen.Item.id = gen.Item.SK.replace("GENERATION#","");
+      delete gen.Item.SK;
+      delete gen.Item.PK;
+    }
+    else {
+      message="Generation not found";
+      status = 404;
+    }
+    generation = gen.Item;
+  } catch (e) {
+    console.log(e);
+  }
+
+  // If it exists, delete it.
+  if (status == 200) {
+    try {
+      let params = {
+        TableName: tableName,
+        Key: {
+          PK: "GENERATIONS",
+          SK: "GENERATION#" + event.pathParameters.id
+        }
+      };
+      var generationDelete = await docClient.delete(params);
+      var result = generationDelete;
+    } catch (e) {
+      message = e;
+      status = 500;
+      error = true;
+    }
+  }
   // Return the data
   return {
     statusCode: status,
@@ -30,7 +73,7 @@ module.exports.deleteGeneration = async (event) => {
     },
     body: JSON.stringify(
       {
-        result: genData,
+        result: result,
         message: message
       },
       null,

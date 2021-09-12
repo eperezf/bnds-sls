@@ -53,7 +53,7 @@ module.exports.createFrequency = async (event) => {
       let params = {
         TableName: tableName,
         Item: {
-          PK: "GENERATION#" + data.generation,
+          PK: "FREQUENCIES" + data.generation,
           SK: "FREQUENCY#" + id,
           enabled: true,
           generation: data.generation

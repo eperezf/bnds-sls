@@ -2,8 +2,8 @@
 const { DynamoDBDocument, GetCommand } = require("@aws-sdk/lib-dynamodb");
 const { DynamoDBClient} = require("@aws-sdk/client-dynamodb");
 
-// List all the frequencies
-module.exports.getFrequencies = async (event) => {
+// List all technologys
+module.exports.listTechnologies = async (event) => {
 
   // Parse and configure claims and data
   var status = 200;
@@ -19,24 +19,25 @@ module.exports.getFrequencies = async (event) => {
     secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY
   });
   const docClient = DynamoDBDocument.from(dynamoClient);
-  var frequencies = [];
-
+  var technologys = [];
+  let params = {
+    TableName: tableName,
+    KeyConditionExpression: "PK = :PK",
+    ExpressionAttributeValues: {
+      ":PK": "TECHNOLOGIES",
+    },
+    ExpressionAttributeNames: {
+      "#name": "name"
+    },
+    ProjectionExpression:"#name,enabled,frequency,SK"
+  };
   try {
-    // Set parameters
-    let params = {
-      TableName: tableName,
-      KeyConditionExpression: "PK = :PK",
-      ExpressionAttributeValues: {
-        ":PK": "FREQUENCIES"
-      },
-      ExpressionAttributeNames: {
-        "#name": "name"
-      },
-      ProjectionExpression:"#name,enabled,frequency,SK"
-    };
-    // Do query
-    let frequency = await docClient.query(params);
-    frequencies = frequency.Items;
+    let gen = await docClient.query(params);
+    technologys = gen.Items;
+    for (var technology of technologys) {
+      technology.id = technology.SK.replace("TECHNOLOGY#","");
+      delete technology.SK;
+    }
   } catch (e) {
     console.log(e);
     error = true;
@@ -51,7 +52,7 @@ module.exports.getFrequencies = async (event) => {
     },
     body: JSON.stringify(
       {
-        frequencies: frequencies,
+        technologys: technologys,
         message: message
       },
       null,
@@ -60,8 +61,8 @@ module.exports.getFrequencies = async (event) => {
   };
 };
 
-// Get specific frequency
-module.exports.getFrequency = async (event) => {
+// Get a technology
+module.exports.getTechnology = async (event) => {
 
   // Parse and configure claims and data
   var status = 200;
@@ -76,34 +77,30 @@ module.exports.getFrequency = async (event) => {
     accessKeyId: process.env.AWS_ACCESS_KEY_ID,
     secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY
   });
+
   const docClient = DynamoDBDocument.from(dynamoClient);
-
-  var frequency = {};
-  var id = event.pathParameters.id;
-  if (id ==""|| !id) {
-    error = true;
-    status = 500;
-    message ="ID Cannot be empty";
-  }
-
-  if (!error) {
-    try {
-      // Get billing data.
-      let params = {
-        TableName: tableName,
-        Key: {
-          PK: "",
-          SK: billingID
-        },
-        ProjectionExpression: "paymentMethod, planId, subscriptionStart, subscriptionEnd, nextBillingDate, cancelAtEnd, currentPeriodStart, currentPeriodEnd"
-      };
-      var billingData = await docClient.get(params);
-      billingData = billingData.Item;
-    } catch (e) {
-
-    } finally {
-
+  var technology = {};
+  var params = {
+    TableName: tableName,
+    Key: {
+      "PK": "TECHNOLOGIES",
+      "SK": "TECHNOLOGY#" + event.pathParameters.id
     }
+  };
+  try {
+    let gen = await docClient.get(params);
+    if (gen.Item) {
+      gen.Item.id = gen.Item.SK.replace("TECHNOLOGY#","");
+      delete gen.Item.SK;
+      delete gen.Item.PK;
+    }
+    else {
+      message="Technology not found";
+      status = 404;
+    }
+    technology = gen.Item;
+  } catch (e) {
+    console.log(e);
   }
   // Return the data
   return {
@@ -113,7 +110,7 @@ module.exports.getFrequency = async (event) => {
     },
     body: JSON.stringify(
       {
-        frequency: frequency,
+        technology: technology,
         message: message
       },
       null,

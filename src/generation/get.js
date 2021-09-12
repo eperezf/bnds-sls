@@ -78,8 +78,6 @@ module.exports.getGeneration = async (event) => {
     secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY
   });
 
-  console.log(event.pathParameters.id);
-
   const docClient = DynamoDBDocument.from(dynamoClient);
   var generation = {};
   var params = {
@@ -91,7 +89,6 @@ module.exports.getGeneration = async (event) => {
   };
   try {
     let gen = await docClient.get(params);
-    console.log(gen);
     if (gen.Item) {
       gen.Item.id = gen.Item.SK.replace("GENERATION#","");
       delete gen.Item.SK;
