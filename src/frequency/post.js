@@ -30,14 +30,40 @@ module.exports.createFrequency = async (event) => {
     console.log("GEN IS EMPTY");
     status = 500;
     error = true;
-    message = "El nombre o generación no pueden ser vacíos";
+    message = "Missing parameters";
   }
 
   if(data.name == "" || !data.name){
     console.log("NAME IS EMPTY");
     status = 500;
     error = true;
-    message = "El nombre o generación no pueden ser vacíos";
+    message = "Missing parameters";
+  }
+
+  // If the generation does not exist, reject the creation
+  var generation = {};
+  var params = {
+    TableName: tableName,
+    Key: {
+      "PK": "GENERATIONS",
+      "SK": "GENERATION#" + data.generation
+    }
+  };
+  try {
+    let gen = await docClient.get(params);
+    if (gen.Item) {
+      gen.Item.id = gen.Item.SK.replace("GENERATION#","");
+      delete gen.Item.SK;
+      delete gen.Item.PK;
+    }
+    else {
+      error = true;
+      message="Generation not found";
+      status = 404;
+    }
+    generation = gen.Item;
+  } catch (e) {
+    console.log(e);
   }
 
   if (!error){
@@ -47,16 +73,14 @@ module.exports.createFrequency = async (event) => {
     var frequency = {};
     try {
       let id = nanoid(6);
-      console.log(id);
-      console.log(tableName);
-      console.log(data.generation);
       let params = {
         TableName: tableName,
         Item: {
-          PK: "FREQUENCIES" + data.generation,
+          PK: "FREQUENCIES",
           SK: "FREQUENCY#" + id,
-          enabled: true,
-          generation: data.generation
+          enabled: data.enabled,
+          generation: data.generation,
+          name: data.name
         }
       };
       frequency = await docClient.put(params);
