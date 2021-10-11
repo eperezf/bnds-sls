@@ -26,43 +26,44 @@ module.exports.updateOperator = async (event) => {
 
   console.log(id);
   console.log(data);
-  /*
+
   try {
     let params = {
       TableName: tableName,
       Key: {
-        PK: "GENERATIONS",
-        SK: "GENERATION#" + id
+        PK: "OPERATORS",
+        SK: "OPERATOR#"+id
       },
-      UpdateExpression: "set #enabled = :enabled, #name = :name",
+      UpdateExpression: "set #n = :n, #u = :u, #e = :e, #t = :t, #f = :f",
       ExpressionAttributeValues: {
-        ":enabled": data.enabled,
-        ":name": data.name,
-        ":id": "GENERATION#" + id
+        ":n": data.name,
+        ":u": data.webUrl,
+        ":e": data.enabled,
+        ":t": data.technologies,
+        ":f": data.frequencies,
+        ":id": "OPERATOR#"+id
       },
       ExpressionAttributeNames: {
-        "#enabled": "enabled",
-        "#name": "name"
+        "#n": "name",
+        "#u": "webUrl",
+        "#e": "enabled",
+        "#t": "technologies",
+        "#f": "frequencies",
       },
       ReturnValues: "UPDATED_NEW",
-      ConditionExpression:"SK=:id",
+      ConditionExpression: "SK=:id",
       RemoveUndefinedValues: "TRUE"
     };
-    var generationUpdate = await docClient.update(params);
-    result = generationUpdate;
+
+    var operatorUpdate = await docClient.update(params);
+    result = operatorUpdate;
+    console.log(result);
   } catch (e) {
     console.log(e);
-    if (e.name == "ConditionalCheckFailedException") {
-      message = "Generation not found";
-      status = 404;
-      error = true;
-    }
-    else {
-      message = e;
-      status = 500;
-      error = true;
-    }
-  }*/
+    message = e;
+    status = 500;
+    error = true;
+  }
 
   // Return the data
   return {
