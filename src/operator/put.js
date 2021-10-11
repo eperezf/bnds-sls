@@ -54,10 +54,8 @@ module.exports.updateOperator = async (event) => {
       ConditionExpression: "SK=:id",
       RemoveUndefinedValues: "TRUE"
     };
-
     var operatorUpdate = await docClient.update(params);
     result = operatorUpdate;
-    console.log(result);
   } catch (e) {
     console.log(e);
     message = e;
