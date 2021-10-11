@@ -1,5 +1,6 @@
 # BNDS API
 
+# API data
 service: bnds
 app: bnds
 useDotenv: true
@@ -24,6 +25,7 @@ provider:
         - dynamodb:*
       Resource: "*"
 
+# Custom config
 custom:
   defaultStage: offline
 
@@ -42,9 +44,19 @@ custom:
     staging: https://dynamodb.us-east-1.amazonaws.com
     offline: http://localhost:8000
 
+# API Functions
 functions:
 
   # /frequency
+
+  # LIST all frequencies
+  getFrequencies:
+    handler: src/frequency/get.getFrequencies
+    events:
+      - http:
+          method: get
+          path: frequency
+          cors: true
   # CREATE a frequency
   createFrequency:
     handler: src/frequency/post.createFrequency
@@ -53,15 +65,7 @@ functions:
           method: post
           path: frequency
           cors: true
-  # READ all the frequencies and their respective IDs
-  getFrequencies:
-    handler: src/frequency/get.getFrequencies
-    events:
-      - http:
-          method: get
-          path: frequency
-          cors: true
-  # READ a specific frequency
+  # READ a frequency
   getFrequency:
     handler: src/frequency/get.getFrequency
     events:
@@ -69,7 +73,7 @@ functions:
           method: get
           path: frequency/{id}
           cors: true
-  # UPDATE a specific frequency
+  # UPDATE a frequency
   updateFrequency:
     handler: src/frequency/put.updateFrequency
     events:
@@ -77,7 +81,7 @@ functions:
           method: put
           path: frequency/{id}
           cors: true
-  # DELETE a specific frequency
+  # DELETE a frequency
   deleteFrequency:
     handler: src/frequency/delete.deleteFrequency
     events:
@@ -87,7 +91,8 @@ functions:
           cors: true
 
   # /generation
-  # List all the generations
+
+  # LIST all generations
   listGenerations:
     handler: src/generation/get.listGenerations
     events:
@@ -95,15 +100,7 @@ functions:
           method: get
           path: generation
           cors: true
-  # Get a generation
-  getGeneration:
-    handler: src/generation/get.getGeneration
-    events:
-      - http:
-          method: get
-          path: generation/{id}
-          cors: true
-  # Create a generation
+  # CREATE a generation
   createGeneration:
     handler: src/generation/post.createGeneration
     events:
@@ -111,7 +108,15 @@ functions:
           method: post
           path: generation
           cors: true
-  # Update a generation
+  # READ a generation
+  getGeneration:
+    handler: src/generation/get.getGeneration
+    events:
+      - http:
+          method: get
+          path: generation/{id}
+          cors: true
+  # UPDATE a generation
   updateGeneration:
     handler: src/generation/put.updateGeneration
     events:
@@ -119,7 +124,7 @@ functions:
           method: put
           path: generation/{id}
           cors: true
-  # Delete a generation
+  # DELETE a generation
   deleteGeneration:
     handler: src/generation/delete.deleteGeneration
     events:
@@ -129,7 +134,8 @@ functions:
           cors: true
 
   # /technology
-  # List all the technologies
+
+  # LIST all technologies
   listTechnologies:
     handler: src/technology/get.listTechnologies
     events:
@@ -137,15 +143,7 @@ functions:
           method: get
           path: technology
           cors: true
-  # Get a technology
-  getTechnology:
-    handler: src/technology/get.getTechnology
-    events:
-      - http:
-          method: get
-          path: technology/{id}
-          cors: true
-  # Create a technology
+  # CREATE a technology
   createTechnology:
     handler: src/technology/post.createTechnology
     events:
@@ -153,7 +151,15 @@ functions:
           method: post
           path: technology
           cors: true
-  # Update a technology
+  # READ a technology
+  getTechnology:
+    handler: src/technology/get.getTechnology
+    events:
+      - http:
+          method: get
+          path: technology/{id}
+          cors: true
+  # UPDATE a technology
   updateTechnology:
     handler: src/technology/put.updateTechnology
     events:
@@ -161,7 +167,7 @@ functions:
           method: put
           path: technology/{id}
           cors: true
-  # Delete a technology
+  # DELETE a technology
   deleteTechnology:
     handler: src/technology/delete.deleteTechnology
     events:
@@ -171,21 +177,46 @@ functions:
           cors: true
 
   # /operator
-  # Get all the operators
-  getOperators:
-    handler: src/operator/get.getOperators
+
+  # LIST all operators
+  listOperators:
+    handler: src/operator/get.listOperators
     events:
       - http:
           method: get
           path: operator
           cors: true
-  # Create an operator
+  # CREATE an operator
   createOperator:
     handler: src/operator/post.createOperator
     events:
       - http:
           method: post
           path: operator
+          cors: true
+  # READ an operator
+  getOperator:
+    handler: src/operator/get.getOperator
+    events:
+      - http:
+          method: get
+          path: operator/{id}
+          cors: true
+  # UPDATE an operator
+  updateOperator:
+    handler: src/operator/put.updateOperator
+    events:
+      - http:
+          method: put
+          path: operator/{id}
+          cors: true
+  # DELETE an operator
+  deleteOperator:
+    handler: src/operator/delete.deleteOperator
+    events:
+      - http:
+          method: delete
+          path: operator/{id}
           cors: true
 
   # /comparator
@@ -315,6 +346,7 @@ resources:
 
     ## COGNITO USER POOLS
 
+# Plugins
 plugins:
   - serverless-dynamodb-local
   - serverless-offline

@@ -32,11 +32,41 @@ module.exports.getFrequencies = async (event) => {
       ExpressionAttributeNames: {
         "#name": "name"
       },
-      ProjectionExpression:"#name,enabled,frequency,SK"
+      ProjectionExpression:"#name,enabled,frequency,SK,generation"
     };
     // Do query
-    let frequency = await docClient.query(params);
-    frequencies = frequency.Items;
+    let freq = await docClient.query(params);
+    frequencies = freq.Items;
+    for (var frequency of frequencies) {
+      frequency.id = frequency.SK.replace("FREQUENCY#","");
+      delete frequency.SK;
+      // Get the generation name
+      var generation = {};
+      var genParams = {
+        TableName: tableName,
+        Key: {
+          "PK": "GENERATIONS",
+          "SK": "GENERATION#" + frequency.generation
+        }
+      };
+      try {
+        let gen = await docClient.get(genParams);
+        if (gen.Item) {
+          gen.Item.id = gen.Item.SK.replace("GENERATION#","");
+          delete gen.Item.SK;
+          delete gen.Item.PK;
+          generation = gen.Item;
+          frequency.genName = generation.name;
+        }
+        else {
+          message="Generation(s) not found";
+          frequency.genName = "DELETED"
+        }
+
+      } catch (e) {
+        console.log(e);
+      }
+    }
   } catch (e) {
     console.log(e);
     error = true;
@@ -87,22 +117,28 @@ module.exports.getFrequency = async (event) => {
   }
 
   if (!error) {
+    var generation = {};
+    var params = {
+      TableName: tableName,
+      Key: {
+        "PK": "FREQUENCIES",
+        "SK": "FREQUENCY#" + event.pathParameters.id
+      }
+    };
     try {
-      // Get billing data.
-      let params = {
-        TableName: tableName,
-        Key: {
-          PK: "",
-          SK: billingID
-        },
-        ProjectionExpression: "paymentMethod, planId, subscriptionStart, subscriptionEnd, nextBillingDate, cancelAtEnd, currentPeriodStart, currentPeriodEnd"
-      };
-      var billingData = await docClient.get(params);
-      billingData = billingData.Item;
+      let freq = await docClient.get(params);
+      if (freq.Item) {
+        freq.Item.id = freq.Item.SK.replace("FREQUENCY#","");
+        delete freq.Item.SK;
+        delete freq.Item.PK;
+      }
+      else {
+        message="Frequency not found";
+        status = 404;
+      }
+      frequency = freq.Item;
     } catch (e) {
-
-    } finally {
-
+      console.log(e);
     }
   }
   // Return the data

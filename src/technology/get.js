@@ -19,7 +19,7 @@ module.exports.listTechnologies = async (event) => {
     secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY
   });
   const docClient = DynamoDBDocument.from(dynamoClient);
-  var technologys = [];
+  var technologies = [];
   let params = {
     TableName: tableName,
     KeyConditionExpression: "PK = :PK",
@@ -33,8 +33,8 @@ module.exports.listTechnologies = async (event) => {
   };
   try {
     let gen = await docClient.query(params);
-    technologys = gen.Items;
-    for (var technology of technologys) {
+    technologies = gen.Items;
+    for (var technology of technologies) {
       technology.id = technology.SK.replace("TECHNOLOGY#","");
       delete technology.SK;
     }
@@ -52,7 +52,7 @@ module.exports.listTechnologies = async (event) => {
     },
     body: JSON.stringify(
       {
-        technologys: technologys,
+        technologies: technologies,
         message: message
       },
       null,

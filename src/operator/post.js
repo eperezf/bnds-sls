@@ -2,7 +2,7 @@
 
 const { DynamoDBDocument, GetCommand } = require("@aws-sdk/lib-dynamodb");
 const { DynamoDBClient} = require("@aws-sdk/client-dynamodb");
-const { Client } = require('@elastic/elasticsearch');
+const nanoid = require ('nanoid');
 
 module.exports.createOperator = async (event) => {
   // Parse and configure claims and data
@@ -17,48 +17,42 @@ module.exports.createOperator = async (event) => {
   const client = new DynamoDBClient({region: "us-east-1", endpoint: process.env.DYNAMODB_ENDPOINT});
   const docClient = DynamoDBDocument.from(client);
 
+  console.log(data);
 
-  try {
-    let params = {
-      TableName: tableName,
-      Item: {
-        PK: data.name,
-        SK: "DATA",
-        imgUrl: data.imgUrl,
-        webUrl: data.webUrl,
-        enabled: data.enabled,
-        frequencies: data.frequencies,
-        technologies: data.technologies
-      }
-    };
-    var phoneData = await docClient.put(params);
-  } catch (e) {
-    console.log(e);
+  // Validate that all the data is correct
+  if (!data.name || data.name == "") {
     error = true;
+    message = "Missing parameters";
     status = 500;
-    message = e;
+  }
+
+  if (!data.webUrl || data.webUrl == "") {
+    error = true;
+    message = "Missing parameters";
+    status = 500;
   }
 
   try {
+    let id = nanoid(6);
     let params = {
       TableName: tableName,
-      Key : {
-        'PK': "OPERATORS",
-        'SK': "LIST"
-      },
-      UpdateExpression: "SET #list = list_append(if_not_exists(#list, :empty), :name)",
-      ExpressionAttributeNames: {
-        "#list": "list"
-      },
-      ExpressionAttributeValues: {
-        ":name": [data.name],
-        ":empty": []
+      Item: {
+        PK: "OPERATORS",
+        SK: "OPERATOR#" + id,
+        name: data.name,
+        webUrl: data.webUrl,
+        enabled: data.enabled,
+        technologies: data.technologies,
+        frequencies: data.frequencies
       }
     };
-    var listData = await docClient.update(params);
-    console.log(listData);
+    let operator = await docClient.put(params);
+    result = operator;
   } catch (e) {
     console.log(e);
+    message = "Error agregando Operadora";
+    error = e;
+    status = 500;
   }
 
   // Return the data
