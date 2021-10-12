@@ -17,8 +17,6 @@ module.exports.createOperator = async (event) => {
   const client = new DynamoDBClient({region: "us-east-1", endpoint: process.env.DYNAMODB_ENDPOINT});
   const docClient = DynamoDBDocument.from(client);
 
-  console.log(data);
-
   // Validate that all the data is correct
   if (!data.name || data.name == "") {
     error = true;
