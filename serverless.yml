@@ -236,6 +236,15 @@ functions:
           path: compare/{phone}/{operator}
           cors: true
 
+  # /login
+  loginUser:
+    handler: src/login/post.loginUser
+    events:
+      - http:
+          method: post
+          path: login
+          cors: true
+
   # /phone
   # Get a phone data
   getPhoneData:
@@ -258,16 +267,6 @@ functions:
       - http:
           method: post
           path: phone
-          cors: true
-
-  # /settings/bootstrapSettings
-  # Bootstrap the settings table with basic data
-  bootstrapSettings:
-    handler: src/settings/post.bootstrapSettings
-    events:
-      - http:
-          method: post
-          path: settings/bootstrap
           cors: true
 
 # Resources
