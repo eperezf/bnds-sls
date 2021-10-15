@@ -275,12 +275,22 @@ functions:
           cors: true
 
   # /login
+  # Login the user
   loginUser:
     handler: src/login/post.loginUser
     events:
       - http:
           method: post
           path: login
+          cors: true
+          
+  # Refresh the idToken using the refreshToken
+  refreshToken:
+    handler: src/login/post.refreshToken
+    events:
+      - http:
+          method: post
+          path: refresh
           cors: true
 
   # /phone
