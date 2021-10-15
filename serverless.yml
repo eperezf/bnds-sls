@@ -72,6 +72,8 @@ functions:
           method: post
           path: frequency
           cors: true
+          authorizer:
+            arn: ${self:custom.authorizer.${opt:stage, self:custom.defaultStage}}
   # READ a frequency
   getFrequency:
     handler: src/frequency/get.getFrequency
@@ -80,6 +82,8 @@ functions:
           method: get
           path: frequency/{id}
           cors: true
+          authorizer:
+            arn: ${self:custom.authorizer.${opt:stage, self:custom.defaultStage}}
   # UPDATE a frequency
   updateFrequency:
     handler: src/frequency/put.updateFrequency
@@ -88,6 +92,8 @@ functions:
           method: put
           path: frequency/{id}
           cors: true
+          authorizer:
+            arn: ${self:custom.authorizer.${opt:stage, self:custom.defaultStage}}
   # DELETE a frequency
   deleteFrequency:
     handler: src/frequency/delete.deleteFrequency
@@ -96,6 +102,8 @@ functions:
           method: delete
           path: frequency/{id}
           cors: true
+          authorizer:
+            arn: ${self:custom.authorizer.${opt:stage, self:custom.defaultStage}}
 
   # /generation
 
@@ -107,6 +115,8 @@ functions:
           method: get
           path: generation
           cors: true
+          authorizer:
+            arn: ${self:custom.authorizer.${opt:stage, self:custom.defaultStage}}
   # CREATE a generation
   createGeneration:
     handler: src/generation/post.createGeneration
@@ -115,6 +125,8 @@ functions:
           method: post
           path: generation
           cors: true
+          authorizer:
+            arn: ${self:custom.authorizer.${opt:stage, self:custom.defaultStage}}
   # READ a generation
   getGeneration:
     handler: src/generation/get.getGeneration
@@ -123,6 +135,8 @@ functions:
           method: get
           path: generation/{id}
           cors: true
+          authorizer:
+            arn: ${self:custom.authorizer.${opt:stage, self:custom.defaultStage}}
   # UPDATE a generation
   updateGeneration:
     handler: src/generation/put.updateGeneration
@@ -131,6 +145,8 @@ functions:
           method: put
           path: generation/{id}
           cors: true
+          authorizer:
+            arn: ${self:custom.authorizer.${opt:stage, self:custom.defaultStage}}
   # DELETE a generation
   deleteGeneration:
     handler: src/generation/delete.deleteGeneration
@@ -139,6 +155,8 @@ functions:
           method: delete
           path: generation/{id}
           cors: true
+          authorizer:
+            arn: ${self:custom.authorizer.${opt:stage, self:custom.defaultStage}}
 
   # /technology
 
@@ -203,6 +221,8 @@ functions:
           method: get
           path: operator
           cors: true
+          authorizer:
+            arn: ${self:custom.authorizer.${opt:stage, self:custom.defaultStage}}
   # CREATE an operator
   createOperator:
     handler: src/operator/post.createOperator
@@ -211,6 +231,8 @@ functions:
           method: post
           path: operator
           cors: true
+          authorizer:
+            arn: ${self:custom.authorizer.${opt:stage, self:custom.defaultStage}}
   # READ an operator
   getOperator:
     handler: src/operator/get.getOperator
@@ -219,6 +241,8 @@ functions:
           method: get
           path: operator/{id}
           cors: true
+          authorizer:
+            arn: ${self:custom.authorizer.${opt:stage, self:custom.defaultStage}}
   # UPDATE an operator
   updateOperator:
     handler: src/operator/put.updateOperator
@@ -227,6 +251,8 @@ functions:
           method: put
           path: operator/{id}
           cors: true
+          authorizer:
+            arn: ${self:custom.authorizer.${opt:stage, self:custom.defaultStage}}
   # DELETE an operator
   deleteOperator:
     handler: src/operator/delete.deleteOperator
@@ -235,6 +261,8 @@ functions:
           method: delete
           path: operator/{id}
           cors: true
+          authorizer:
+            arn: ${self:custom.authorizer.${opt:stage, self:custom.defaultStage}}
 
   # /comparator
   # Compare a phone and an operator
@@ -264,6 +292,8 @@ functions:
           method: get
           path: phone/{fullName}
           cors: true
+          authorizer:
+            arn: ${self:custom.authorizer.${opt:stage, self:custom.defaultStage}}
   autocomplete:
     handler: src/phone/get.autocomplete
     events:
@@ -278,6 +308,8 @@ functions:
           method: post
           path: phone
           cors: true
+          authorizer:
+            arn: ${self:custom.authorizer.${opt:stage, self:custom.defaultStage}}
 
 # Resources
 resources:

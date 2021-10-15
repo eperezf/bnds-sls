@@ -39,14 +39,20 @@ module.exports.loginUser = async (event) => {
   var loginRes;
   try {
     loginRes = await asyncAuthenticateUser(cognitoUser, authenticationDetails);
-    idToken = loginRes.idToken.jwtToken;
-    refreshToken = loginRes.refreshToken.token;
-    accessToken = loginRes.accessToken.jwtToken;
-    result = {
-      "idToken": idToken,
-      "refreshToken": refreshToken,
-      "accessToken": accessToken
-    };
+    console.log(loginRes);
+    if (!loginRes.idToken) {
+      result = "Password change required"
+    } else {
+      idToken = loginRes.idToken.jwtToken;
+      refreshToken = loginRes.refreshToken.token;
+      accessToken = loginRes.accessToken.jwtToken;
+      result = {
+        "idToken": idToken,
+        "refreshToken": refreshToken,
+        "accessToken": accessToken
+      };
+    }
+
   } catch (e) {
     console.log("ERROR");
     console.log(e);
