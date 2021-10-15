@@ -150,6 +150,8 @@ functions:
           method: get
           path: technology
           cors: true
+          authorizer:
+            arn: ${self:custom.authorizer.${opt:stage, self:custom.defaultStage}}
   # CREATE a technology
   createTechnology:
     handler: src/technology/post.createTechnology
@@ -158,6 +160,8 @@ functions:
           method: post
           path: technology
           cors: true
+          authorizer:
+            arn: ${self:custom.authorizer.${opt:stage, self:custom.defaultStage}}
   # READ a technology
   getTechnology:
     handler: src/technology/get.getTechnology
@@ -166,6 +170,8 @@ functions:
           method: get
           path: technology/{id}
           cors: true
+          authorizer:
+            arn: ${self:custom.authorizer.${opt:stage, self:custom.defaultStage}}
   # UPDATE a technology
   updateTechnology:
     handler: src/technology/put.updateTechnology
@@ -174,6 +180,8 @@ functions:
           method: put
           path: technology/{id}
           cors: true
+          authorizer:
+            arn: ${self:custom.authorizer.${opt:stage, self:custom.defaultStage}}
   # DELETE a technology
   deleteTechnology:
     handler: src/technology/delete.deleteTechnology
@@ -182,6 +190,8 @@ functions:
           method: delete
           path: technology/{id}
           cors: true
+          authorizer:
+            arn: ${self:custom.authorizer.${opt:stage, self:custom.defaultStage}}
 
   # /operator
 
