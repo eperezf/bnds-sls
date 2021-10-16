@@ -263,16 +263,6 @@ functions:
           cors: true
           authorizer:
             arn: ${self:custom.authorizer.${opt:stage, self:custom.defaultStage}}
-  # Obtain signed URL for image upload
-  uploadOperator:
-    handler: src/operator/post.uploadOperatorImage
-    events:
-      - http:
-          method: post
-          path: url/operator
-          cors: true
-          authorizer:
-            arn: ${self:custom.authorizer.${opt:stage, self:custom.defaultStage}}
 
   # /comparator
 

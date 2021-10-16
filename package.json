@@ -27,9 +27,9 @@
     "nanoid": "^2.1.11"
   },
   "devDependencies": {
-    "serverless-dynamodb-local": "^0.2.39",
-    "serverless-offline": "^7.0.0",
-    "serverless-offline-dotenv": "^0.3.0"
+    "serverless-dynamodb-local": "^0.2.40",
+    "serverless-offline": "^5.8.0",
+    "serverless-offline-dotenv": "^0.4.0"
   },
   "jshintConfig": {
     "esversion": 8,
