@@ -23,6 +23,7 @@ provider:
     - Effect: "Allow"
       Action:
         - dynamodb:*
+        - s3:*
       Resource: "*"
 
 # Custom config
