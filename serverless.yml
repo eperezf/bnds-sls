@@ -263,8 +263,19 @@ functions:
           cors: true
           authorizer:
             arn: ${self:custom.authorizer.${opt:stage, self:custom.defaultStage}}
+  # Obtain signed URL for image upload
+  uploadOperator:
+    handler: src/operator/post.uploadOperatorImage
+    events:
+      - http:
+          method: post
+          path: url/operator
+          cors: true
+          authorizer:
+            arn: ${self:custom.authorizer.${opt:stage, self:custom.defaultStage}}
 
   # /comparator
+
   # Compare a phone and an operator
   compare:
     handler: src/comparator/get.compare
@@ -275,6 +286,7 @@ functions:
           cors: true
 
   # /login
+
   # Login the user
   loginUser:
     handler: src/login/post.loginUser
@@ -283,7 +295,6 @@ functions:
           method: post
           path: login
           cors: true
-          
   # Refresh the idToken using the refreshToken
   refreshToken:
     handler: src/login/post.refreshToken
@@ -294,6 +305,7 @@ functions:
           cors: true
 
   # /phone
+
   # Get a phone data
   getPhoneData:
     handler: src/phone/get.getPhoneData

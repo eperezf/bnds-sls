@@ -2,6 +2,8 @@
 
 const { DynamoDBDocument, GetCommand } = require("@aws-sdk/lib-dynamodb");
 const { DynamoDBClient} = require("@aws-sdk/client-dynamodb");
+const { S3Client, PutObjectCommand } = require("@aws-sdk/client-s3");
+const { getSignedUrl } = require("@aws-sdk/s3-request-presigner");
 const nanoid = require ('nanoid');
 
 module.exports.createOperator = async (event) => {
@@ -52,6 +54,44 @@ module.exports.createOperator = async (event) => {
     error = e;
     status = 500;
   }
+
+  // Return the data
+  return {
+    statusCode: status,
+    headers: {
+      "Access-Control-Allow-Origin": "*"
+    },
+    body: JSON.stringify(
+      {
+        result: result,
+        error: error,
+        message: message
+      },
+      null,
+      2
+    ),
+  };
+};
+
+module.exports.uploadOperatorImage = async (event) => {
+  // Parse and configure claims and data
+  var status = 200;
+  var message = "ok";
+  var result = {};
+  var error = false;
+  const data = JSON.parse(event.body);
+  console.log("Configuring S3");
+  const client = new S3Client();
+  console.log("Client set");
+  const command = new PutObjectCommand({
+    Bucket:"static-dev.bnds.cl",
+    Key:"operators/id",
+    ACL: 'public-read'
+  });
+  console.log("Command set");
+  console.log("Getting signed URL");
+  const url = await getSignedUrl(client, command, {expiresIn: 600});
+  console.log(url);
 
   // Return the data
   return {
