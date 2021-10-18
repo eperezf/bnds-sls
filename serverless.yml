@@ -400,5 +400,6 @@ resources:
 # Plugins
 plugins:
   - serverless-dynamodb-local
+  - serverless-bundle
   - serverless-offline
   - serverless-offline-dotenv
