@@ -28,6 +28,7 @@
     "nanoid": "^2.1.11"
   },
   "devDependencies": {
+    "serverless-bundle": "^5.0.2",
     "serverless-dynamodb-local": "^0.2.40",
     "serverless-offline": "^5.8.0",
     "serverless-offline-dotenv": "^0.4.0"
