@@ -295,7 +295,7 @@ functions:
     events:
       - http:
           method: get
-          path: phone/autocomplete/{fullName}
+          path: autocomplete/{fullName}
           cors: true
 
   # /comparator
