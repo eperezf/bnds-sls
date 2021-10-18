@@ -1,9 +1,8 @@
-'use strict';
-const { DynamoDBDocument, GetCommand } = require("@aws-sdk/lib-dynamodb");
+const { DynamoDBDocument } = require("@aws-sdk/lib-dynamodb");
 const { DynamoDBClient} = require("@aws-sdk/client-dynamodb");
 
 // List all the frequencies
-module.exports.getFrequencies = async (event) => {
+export const getFrequencies = async (event) => {
 
   // Parse and configure claims and data
   var status = 200;
@@ -60,7 +59,7 @@ module.exports.getFrequencies = async (event) => {
         }
         else {
           message="Generation(s) not found";
-          frequency.genName = "DELETED"
+          frequency.genName = "DELETED";
         }
 
       } catch (e) {
@@ -82,7 +81,8 @@ module.exports.getFrequencies = async (event) => {
     body: JSON.stringify(
       {
         frequencies: frequencies,
-        message: message
+        message: message,
+        error: error
       },
       null,
       2
@@ -91,7 +91,7 @@ module.exports.getFrequencies = async (event) => {
 };
 
 // Get specific frequency
-module.exports.getFrequency = async (event) => {
+export const getFrequency = async (event) => {
 
   // Parse and configure claims and data
   var status = 200;
@@ -117,7 +117,6 @@ module.exports.getFrequency = async (event) => {
   }
 
   if (!error) {
-    var generation = {};
     var params = {
       TableName: tableName,
       Key: {
@@ -139,6 +138,8 @@ module.exports.getFrequency = async (event) => {
       frequency = freq.Item;
     } catch (e) {
       console.log(e);
+      error = true;
+      status = 500;
     }
   }
   // Return the data
@@ -150,7 +151,8 @@ module.exports.getFrequency = async (event) => {
     body: JSON.stringify(
       {
         frequency: frequency,
-        message: message
+        message: message,
+        error: error
       },
       null,
       2

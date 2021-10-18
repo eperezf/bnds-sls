@@ -1,9 +1,8 @@
-'use strict';
-const { DynamoDBDocument, GetCommand } = require("@aws-sdk/lib-dynamodb");
+const { DynamoDBDocument } = require("@aws-sdk/lib-dynamodb");
 const { DynamoDBClient} = require("@aws-sdk/client-dynamodb");
 
 // List all technologys
-module.exports.listTechnologies = async (event) => {
+export const listTechnologies = async (event) => {
 
   // Parse and configure claims and data
   var status = 200;
@@ -53,7 +52,8 @@ module.exports.listTechnologies = async (event) => {
     body: JSON.stringify(
       {
         technologies: technologies,
-        message: message
+        message: message,
+        error: error
       },
       null,
       2
@@ -62,7 +62,7 @@ module.exports.listTechnologies = async (event) => {
 };
 
 // Get a technology
-module.exports.getTechnology = async (event) => {
+export const getTechnology = async (event) => {
 
   // Parse and configure claims and data
   var status = 200;
@@ -100,6 +100,8 @@ module.exports.getTechnology = async (event) => {
     }
     technology = gen.Item;
   } catch (e) {
+    error = true;
+    status = 500;
     console.log(e);
   }
   // Return the data
@@ -111,7 +113,8 @@ module.exports.getTechnology = async (event) => {
     body: JSON.stringify(
       {
         technology: technology,
-        message: message
+        message: message,
+        error: error
       },
       null,
       2

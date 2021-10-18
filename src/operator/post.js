@@ -1,12 +1,10 @@
-'use strict';
-
-const { DynamoDBDocument, GetCommand } = require("@aws-sdk/lib-dynamodb");
+const { DynamoDBDocument } = require("@aws-sdk/lib-dynamodb");
 const { DynamoDBClient} = require("@aws-sdk/client-dynamodb");
 const { S3Client, PutObjectCommand } = require("@aws-sdk/client-s3");
 const { getSignedUrl } = require("@aws-sdk/s3-request-presigner");
-const nanoid = require ('nanoid');
+const nanoid = require('nanoid');
 
-module.exports.createOperator = async (event) => {
+export const createOperator = async (event) => {
   // Parse and configure claims and data
   var status = 200;
   var message = "ok";

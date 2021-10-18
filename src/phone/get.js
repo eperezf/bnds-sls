@@ -1,9 +1,8 @@
-'use strict';
-const { DynamoDBDocument, GetCommand } = require("@aws-sdk/lib-dynamodb");
+const { DynamoDBDocument } = require("@aws-sdk/lib-dynamodb");
 const { DynamoDBClient} = require("@aws-sdk/client-dynamodb");
-const { Client } = require('@elastic/elasticsearch');
+//const { Client } = require('@elastic/elasticsearch');
 
-module.exports.getPhone = async (event) => {
+export const getPhone = async (event) => {
   // Parse and configure claims and data
   var status = 200;
   var message = "ok";

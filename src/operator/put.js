@@ -1,10 +1,8 @@
-'use strict';
-const { DynamoDBDocument, GetCommand } = require("@aws-sdk/lib-dynamodb");
+const { DynamoDBDocument} = require("@aws-sdk/lib-dynamodb");
 const { DynamoDBClient} = require("@aws-sdk/client-dynamodb");
-const nanoid = require ('nanoid');
 
 // Update an operator
-module.exports.updateOperator = async (event) => {
+export const updateOperator = async (event) => {
 
   // Parse and configure claims and data
   var status = 200;
@@ -72,7 +70,8 @@ module.exports.updateOperator = async (event) => {
     body: JSON.stringify(
       {
         result : result,
-        message: message
+        message: message,
+        error: error
       },
       null,
       2

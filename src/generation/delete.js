@@ -1,10 +1,8 @@
-'use strict';
-const { DynamoDBDocument, GetCommand } = require("@aws-sdk/lib-dynamodb");
+const { DynamoDBDocument } = require("@aws-sdk/lib-dynamodb");
 const { DynamoDBClient} = require("@aws-sdk/client-dynamodb");
-const nanoid = require ('nanoid');
 
 // Create a generation
-module.exports.deleteGeneration = async (event) => {
+export const deleteGeneration = async (event) => {
 
   // Parse and configure claims and data
   var status = 200;
@@ -20,10 +18,8 @@ module.exports.deleteGeneration = async (event) => {
     secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY
   });
   const docClient = DynamoDBDocument.from(dynamoClient);
-  var genData = {};
 
   // First check if the Generation exists
-  var generation = {};
   var params = {
     TableName: tableName,
     Key: {
@@ -42,7 +38,6 @@ module.exports.deleteGeneration = async (event) => {
       message="Generation not found";
       status = 404;
     }
-    generation = gen.Item;
   } catch (e) {
     console.log(e);
   }
@@ -74,7 +69,8 @@ module.exports.deleteGeneration = async (event) => {
     body: JSON.stringify(
       {
         result: result,
-        message: message
+        message: message,
+        error: error
       },
       null,
       2

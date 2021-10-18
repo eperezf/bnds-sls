@@ -4,8 +4,8 @@
   "description": "bnds-sls",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "sls offline start --httpPort 3001 -m"
+    "test": "serverless-bundle test",
+    "start": "sls offline start --httpPort 3001 --migrate"
   },
   "repository": {
     "type": "git",
@@ -28,9 +28,9 @@
     "nanoid": "^2.1.11"
   },
   "devDependencies": {
-    "serverless-bundle": "^5.0.2",
-    "serverless-dynamodb-local": "^0.2.40",
-    "serverless-offline": "^5.8.0",
+    "serverless-bundle": "^5.0.0",
+    "serverless-dynamodb-local": "^0.2.4",
+    "serverless-offline": "^8.2.0",
     "serverless-offline-dotenv": "^0.4.0"
   },
   "jshintConfig": {

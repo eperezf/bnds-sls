@@ -1,5 +1,3 @@
-'use strict';
-
 const AmazonCognitoIdentity = require('amazon-cognito-identity-js');
 
 module.exports.loginUser = async (event) => {
@@ -19,15 +17,15 @@ module.exports.loginUser = async (event) => {
 
   // Initialize data
   var userData = {
-  	Username: data.email,
-  	Pool: userPool,
+    Username: data.email,
+    Pool: userPool,
   };
   var cognitoUser = new AmazonCognitoIdentity.CognitoUser(userData);
 
   // Initialize authentication
   var authenticationData = {
-  	Username: data.email,
-  	Password: data.password,
+    Username: data.email,
+    Password: data.password,
   };
   var authenticationDetails = new AmazonCognitoIdentity.AuthenticationDetails(authenticationData);
 
@@ -35,7 +33,6 @@ module.exports.loginUser = async (event) => {
   var idToken = "";
   var refreshToken = "";
   var accessToken = "";
-  var tokens = {};
   var loginRes;
   try {
     loginRes = await asyncAuthenticateUser(cognitoUser, authenticationDetails);
@@ -97,8 +94,8 @@ module.exports.refreshToken = async (event) => {
 
   // Initialize data
   var userData = {
-  	Username: data.email,
-  	Pool: userPool,
+    Username: data.email,
+    Pool: userPool,
   };
   var cognitoUser = new AmazonCognitoIdentity.CognitoUser(userData);
   const cognitoRefreshToken = new AmazonCognitoIdentity.CognitoRefreshToken({RefreshToken: data.token});
@@ -106,7 +103,6 @@ module.exports.refreshToken = async (event) => {
   var idToken = "";
   var refreshToken = "";
   var accessToken = "";
-  var tokens = {};
   var refreshRes;
   try {
     refreshRes = await asyncRefreshSession(cognitoUser, cognitoRefreshToken);
@@ -144,7 +140,7 @@ module.exports.refreshToken = async (event) => {
 
 function asyncRefreshSession(cognitoUser, cognitoRefreshToken) {
   return new Promise(function(resolve, reject) {
-    cognitoUser.refreshSession(cognitoRefreshToken, (err, session)=>{
+    cognitoUser.refreshSession(cognitoRefreshToken, (err, session) => {
       if (err) {
         reject(err);
       } else {

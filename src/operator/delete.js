@@ -1,7 +1,5 @@
-'use strict';
-const { DynamoDBDocument, GetCommand } = require("@aws-sdk/lib-dynamodb");
+const { DynamoDBDocument } = require("@aws-sdk/lib-dynamodb");
 const { DynamoDBClient} = require("@aws-sdk/client-dynamodb");
-const nanoid = require ('nanoid');
 
 // Delete an operator
 module.exports.deleteOperator = async (event) => {
@@ -20,10 +18,7 @@ module.exports.deleteOperator = async (event) => {
     secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY
   });
   const docClient = DynamoDBDocument.from(dynamoClient);
-  var opData = {};
-
   // First check if the Generation exists
-  var operator = {};
   var params = {
     TableName: tableName,
     Key: {
@@ -42,8 +37,9 @@ module.exports.deleteOperator = async (event) => {
       message="Operator not found";
       status = 404;
     }
-    operator = op.Item;
   } catch (e) {
+    error = true;
+    status = 500;
     console.log(e);
   }
 
@@ -74,7 +70,8 @@ module.exports.deleteOperator = async (event) => {
     body: JSON.stringify(
       {
         result: result,
-        message: message
+        message: message,
+        error: error
       },
       null,
       2

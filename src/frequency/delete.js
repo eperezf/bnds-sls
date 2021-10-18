@@ -1,10 +1,8 @@
-'use strict';
-const { DynamoDBDocument, GetCommand } = require("@aws-sdk/lib-dynamodb");
+const { DynamoDBDocument } = require("@aws-sdk/lib-dynamodb");
 const { DynamoDBClient} = require("@aws-sdk/client-dynamodb");
-const nanoid = require ('nanoid');
 
 // Create a generation
-module.exports.deleteFrequency = async (event) => {
+export const deleteFrequency = async (event) => {
 
   // Parse and configure claims and data
   var status = 200;
@@ -20,10 +18,8 @@ module.exports.deleteFrequency = async (event) => {
     secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY
   });
   const docClient = DynamoDBDocument.from(dynamoClient);
-  var genData = {};
 
   // First check if the Frequency exists
-  var generation = {};
   var params = {
     TableName: tableName,
     Key: {
@@ -34,15 +30,12 @@ module.exports.deleteFrequency = async (event) => {
   try {
     let gen = await docClient.get(params);
     if (gen.Item) {
-      gen.Item.id = gen.Item.SK.replace("FREQUENCY#","");
-      delete gen.Item.SK;
-      delete gen.Item.PK;
+      status = 200;
     }
     else {
       message="Frequency not found";
       status = 404;
     }
-    generation = gen.Item;
   } catch (e) {
     console.log(e);
   }
@@ -74,7 +67,8 @@ module.exports.deleteFrequency = async (event) => {
     body: JSON.stringify(
       {
         result: result,
-        message: message
+        message: message,
+        error: error
       },
       null,
       2

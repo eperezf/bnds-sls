@@ -1,7 +1,5 @@
-'use strict';
-const { DynamoDBDocument, GetCommand } = require("@aws-sdk/lib-dynamodb");
+const { DynamoDBDocument } = require("@aws-sdk/lib-dynamodb");
 const { DynamoDBClient} = require("@aws-sdk/client-dynamodb");
-const nanoid = require ('nanoid');
 
 // Update a generation
 module.exports.updateGeneration = async (event) => {
@@ -69,7 +67,8 @@ module.exports.updateGeneration = async (event) => {
     body: JSON.stringify(
       {
         result : result,
-        message: message
+        message: message,
+        error: error
       },
       null,
       2

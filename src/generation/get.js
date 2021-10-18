@@ -1,9 +1,8 @@
-'use strict';
-const { DynamoDBDocument, GetCommand } = require("@aws-sdk/lib-dynamodb");
+const { DynamoDBDocument } = require("@aws-sdk/lib-dynamodb");
 const { DynamoDBClient} = require("@aws-sdk/client-dynamodb");
 
 // List all generations
-module.exports.listGenerations = async (event) => {
+export const listGenerations = async (event) => {
 
   // Parse and configure claims and data
   var status = 200;
@@ -53,7 +52,8 @@ module.exports.listGenerations = async (event) => {
     body: JSON.stringify(
       {
         generations: generations,
-        message: message
+        message: message,
+        error: error
       },
       null,
       2
@@ -62,7 +62,7 @@ module.exports.listGenerations = async (event) => {
 };
 
 // Get a generation
-module.exports.getGeneration = async (event) => {
+export const getGeneration = async (event) => {
 
   // Parse and configure claims and data
   var status = 200;
@@ -111,7 +111,8 @@ module.exports.getGeneration = async (event) => {
     body: JSON.stringify(
       {
         generation: generation,
-        message: message
+        message: message,
+        error: error
       },
       null,
       2

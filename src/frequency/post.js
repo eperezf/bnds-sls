@@ -1,9 +1,8 @@
-'use strict';
-const { DynamoDBDocument, GetCommand } = require("@aws-sdk/lib-dynamodb");
+const { DynamoDBDocument } = require("@aws-sdk/lib-dynamodb");
 const { DynamoDBClient} = require("@aws-sdk/client-dynamodb");
-const nanoid = require ('nanoid');
+const nanoid = require('nanoid');
 
-module.exports.createFrequency = async (event) => {
+export const createFrequency = async (event) => {
 
   // Parse and configure claims and data
   var status = 200;
@@ -41,7 +40,6 @@ module.exports.createFrequency = async (event) => {
   }
 
   // If the generation does not exist, reject the creation
-  var generation = {};
   var params = {
     TableName: tableName,
     Key: {
@@ -61,7 +59,6 @@ module.exports.createFrequency = async (event) => {
       message="Generation not found";
       status = 404;
     }
-    generation = gen.Item;
   } catch (e) {
     console.log(e);
   }

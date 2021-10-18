@@ -1,13 +1,12 @@
-'use strict';
-const { DynamoDBDocument, GetCommand } = require("@aws-sdk/lib-dynamodb");
+const { DynamoDBDocument } = require("@aws-sdk/lib-dynamodb");
 const { DynamoDBClient} = require("@aws-sdk/client-dynamodb");
 
-module.exports.listOperators = async (event) => {
+export const listOperators = async (event) => {
 
   // Parse and configure claims and data
   var status = 200;
   var message = "ok";
-  const data = event.queryStringParameters;
+  var error = false;
 
   // Configure DynamoDB
   const tableName = "operators-"+process.env.NODE_ENV;
@@ -50,7 +49,8 @@ module.exports.listOperators = async (event) => {
     body: JSON.stringify(
       {
         operators: resultData.Items,
-        message: message
+        message: message,
+        error: error
       },
       null,
       2
@@ -59,7 +59,7 @@ module.exports.listOperators = async (event) => {
 };
 
 // Get an operator
-module.exports.getOperator = async (event) => {
+export const getOperator = async (event) => {
 
   // Parse and configure claims and data
   var status = 200;
@@ -97,6 +97,9 @@ module.exports.getOperator = async (event) => {
     }
     operator = gen.Item;
   } catch (e) {
+    error = true;
+    status = 500;
+    message = e;
     console.log(e);
   }
   // Return the data
@@ -108,7 +111,8 @@ module.exports.getOperator = async (event) => {
     body: JSON.stringify(
       {
         operator: operator,
-        message: message
+        message: message,
+        error: error
       },
       null,
       2

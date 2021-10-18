@@ -1,10 +1,9 @@
-'use strict';
-const { DynamoDBDocument, GetCommand } = require("@aws-sdk/lib-dynamodb");
+const { DynamoDBDocument } = require("@aws-sdk/lib-dynamodb");
 const { DynamoDBClient} = require("@aws-sdk/client-dynamodb");
-const nanoid = require ('nanoid');
+const nanoid = require('nanoid');
 
 // Create a generation
-module.exports.createGeneration = async (event) => {
+export const createGeneration = async (event) => {
 
   // Parse and configure claims and data
   var status = 200;
@@ -24,7 +23,7 @@ module.exports.createGeneration = async (event) => {
   var data = JSON.parse(event.body);
   let params = {
     TableName: tableName,
-    Item: {
+    Item: {
       PK: "GENERATIONS",
       SK: "GENERATION#"+nanoid(6),
       name: data.name,
@@ -50,7 +49,8 @@ module.exports.createGeneration = async (event) => {
     body: JSON.stringify(
       {
         result: genData,
-        message: message
+        message: message,
+        error: error
       },
       null,
       2
