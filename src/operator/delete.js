@@ -2,7 +2,7 @@ const { DynamoDBDocument } = require("@aws-sdk/lib-dynamodb");
 const { DynamoDBClient} = require("@aws-sdk/client-dynamodb");
 
 // Delete an operator
-module.exports.deleteOperator = async (event) => {
+export const deleteOperator = async (event) => {
 
   // Parse and configure claims and data
   var status = 200;

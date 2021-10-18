@@ -2,7 +2,7 @@ const { DynamoDBDocument } = require("@aws-sdk/lib-dynamodb");
 const { DynamoDBClient} = require("@aws-sdk/client-dynamodb");
 
 // Update a generation
-module.exports.updateGeneration = async (event) => {
+export const updateGeneration = async (event) => {
 
   // Parse and configure claims and data
   var status = 200;

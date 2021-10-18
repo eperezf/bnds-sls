@@ -1,6 +1,6 @@
 const AmazonCognitoIdentity = require('amazon-cognito-identity-js');
 
-module.exports.loginUser = async (event) => {
+export const loginUser = async (event) => {
   // Parse and configure claims and data
   var status = 200;
   var message = "ok";
@@ -77,7 +77,7 @@ module.exports.loginUser = async (event) => {
   };
 };
 
-module.exports.refreshToken = async (event) => {
+export const refreshToken = async (event) => {
   // Parse and configure claims and data
   var status = 200;
   var message = "ok";
