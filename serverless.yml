@@ -290,24 +290,6 @@ functions:
             arn: ${self:custom.authorizer.${opt:stage, self:custom.defaultStage}}
   # UPDATE a phone
   # DELETE a phone
-  autocomplete:
-    handler: src/phone/get.autocomplete
-    events:
-      - http:
-          method: get
-          path: autocomplete/{fullName}
-          cors: true
-
-  # /comparator
-
-  # Compare a phone and an operator
-  compare:
-    handler: src/comparator/get.compare
-    events:
-      - http:
-          method: get
-          path: compare/{phone}/{operator}
-          cors: true
 
   # /login
 
