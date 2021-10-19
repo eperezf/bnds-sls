@@ -74,6 +74,7 @@ export const createPhone = async (event) => {
       body: document,
       refresh:true
     });
+    console.log(osResponse);
     // Create the S3 command
     const command = new PutObjectCommand({
       Bucket:process.env.AWS_S3_BUCKET_NAME,
