@@ -2,6 +2,7 @@ const { DynamoDBDocument } = require("@aws-sdk/lib-dynamodb");
 const { DynamoDBClient} = require("@aws-sdk/client-dynamodb");
 const { S3Client, PutObjectCommand } = require("@aws-sdk/client-s3");
 const { getSignedUrl } = require("@aws-sdk/s3-request-presigner");
+const { Client } = require('@opensearch-project/opensearch');
 const nanoid = require('nanoid');
 
 export const createPhone = async (event) => {
@@ -11,11 +12,17 @@ export const createPhone = async (event) => {
   var result = {};
   var error = false;
   const data = JSON.parse(event.body);
+  console.log(data);
 
   // Configure DynamoDB
   const tableName = "phones-"+process.env.NODE_ENV;
   const client = new DynamoDBClient({region: "us-east-1", endpoint: process.env.DYNAMODB_ENDPOINT});
   const docClient = DynamoDBDocument.from(client, {marshallOptions:{removeUndefinedValues:true}});
+
+  // Configure OpenSearch
+  var osClient = new Client({
+    node: "https://" + process.env.OPENSEARCH_USER + ":" + process.env.OPENSEARCH_PASSWORD + "@" + process.env.OPENSEARCH_ENDPOINT
+  });
 
   // Configure S3
   const S3client = new S3Client();
@@ -34,7 +41,10 @@ export const createPhone = async (event) => {
   }
 
   try {
-    // Try saving the operator
+    if (!data.enabled) {
+      data.enabled = false;
+    }
+    // Try saving the phone
     let id = nanoid(6);
     let params = {
       TableName: tableName,
@@ -46,9 +56,24 @@ export const createPhone = async (event) => {
         enabled: data.enabled,
       }
     };
-    // Save the phone
+    // Save the phone in DynamoDB
     let phone = await docClient.put(params);
     result = phone;
+    // Create the OpenSearch command
+    let document = {
+      'brand': data.brand,
+      'model': data.model,
+      'fullName': data.brand + " " + data.model,
+      'enabled': data.enabled,
+      'variants': []
+    };
+    // Save the phone in OpenSearch
+    var osResponse = await osClient.index({
+      id: id,
+      index:"phones",
+      body: document,
+      refresh:true
+    });
     // Create the S3 command
     const command = new PutObjectCommand({
       Bucket:process.env.AWS_S3_BUCKET_NAME,

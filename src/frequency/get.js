@@ -2,7 +2,7 @@ const { DynamoDBDocument } = require("@aws-sdk/lib-dynamodb");
 const { DynamoDBClient} = require("@aws-sdk/client-dynamodb");
 
 // List all the frequencies
-export const getFrequencies = async (event) => {
+export const listFrequencies = async (event) => {
 
   // Parse and configure claims and data
   var status = 200;

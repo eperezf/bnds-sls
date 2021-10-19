@@ -1,6 +1,53 @@
 const { DynamoDBDocument } = require("@aws-sdk/lib-dynamodb");
 const { DynamoDBClient} = require("@aws-sdk/client-dynamodb");
-//const { Client } = require('@elastic/elasticsearch');
+const { Client } = require('@opensearch-project/opensearch');
+
+// List the phones by page from OpenSearch
+export const listPhones = async (event) => {
+  // Parse and configure claims and data
+  var status = 200;
+  var message = "ok";
+  var phones = [];
+  var error = false;
+
+  // Configure OpenSearch
+  var client = new Client({
+    node: "https://" + process.env.OPENSEARCH_USER + ":" + process.env.OPENSEARCH_PASSWORD + "@" + process.env.OPENSEARCH_ENDPOINT
+  });
+  // Search for the document.
+    var response = await client.search({
+        index: "phones",
+        body: {},
+        size:10
+    });
+
+    for (var hit of response.body.hits.hits) {
+      phones.push({
+        id: hit._id,
+        brand: hit._source.brand,
+        model: hit._source.model,
+        enabled: hit._source.enabled,
+        variants: hit._source.variants
+      });
+    }
+
+  // Return the data
+  return {
+    statusCode: status,
+    headers: {
+      "Access-Control-Allow-Origin": "*"
+    },
+    body: JSON.stringify(
+      {
+        phones: phones,
+        error: error,
+        message: message
+      },
+      null,
+      2
+    ),
+  };
+};
 
 export const getPhone = async (event) => {
   // Parse and configure claims and data
@@ -69,5 +116,4 @@ export const getPhone = async (event) => {
       2
     ),
   };
-
 };

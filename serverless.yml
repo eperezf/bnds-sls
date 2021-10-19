@@ -56,8 +56,8 @@ functions:
   # /frequency
 
   # LIST all frequencies
-  getFrequencies:
-    handler: src/frequency/get.getFrequencies
+  listFrequencies:
+    handler: src/frequency/get.listFrequencies
     events:
       - http:
           method: get
@@ -268,6 +268,15 @@ functions:
   # /phone
 
   # LIST a phone
+  listPhones:
+    handler: src/phone/get.listPhones
+    events:
+      - http:
+          method: get
+          path: phone
+          cors: true
+          authorizer:
+            arn: ${self:custom.authorizer.${opt:stage, self:custom.defaultStage}}
   # CREATE a phone
   createPhone:
     handler: src/phone/post.createPhone
