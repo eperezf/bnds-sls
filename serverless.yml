@@ -298,6 +298,14 @@ functions:
           authorizer:
             arn: ${self:custom.authorizer.${opt:stage, self:custom.defaultStage}}
   # UPDATE a phone
+  updatePhone:
+    handler: src/phone/put.updatePhone
+    events:
+      - http:
+          method: put
+          path: phone/{id}
+          authorizer:
+            arn: ${self:custom.authorizer.${opt:stage, self:custom.defaultStage}}
   # DELETE a phone
 
   # /login

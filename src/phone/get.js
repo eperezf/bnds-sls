@@ -7,22 +7,51 @@ export const listPhones = async (event) => {
   // Parse and configure claims and data
   var status = 200;
   var message = "ok";
-  var phones = [];
+  var phones = {};
+  phones.phones = [];
   var error = false;
+  console.log(event.queryStringParameters);
+
 
   // Configure OpenSearch
   var client = new Client({
     node: "https://" + process.env.OPENSEARCH_USER + ":" + process.env.OPENSEARCH_PASSWORD + "@" + process.env.OPENSEARCH_ENDPOINT
   });
+
+  // If there's a page parameter, set the From correctly (only 10 by 10 for now)
+  let from = 0;
+  let params = {
+    index: "phones",
+    body: {},
+    size:10,
+    from: from,
+    sort: "brand.keyword:asc"
+  };
+  if (event.queryStringParameters) {
+    // If a page was selected, change the query
+    if (event.queryStringParameters.p) {
+      from+=(10*(event.queryStringParameters.p-1));
+    }
+    // If a search term was sent, set the search data
+    if (event.queryStringParameters.s) {
+      params.body = {
+        'query': {
+          'match': {
+            'fullName': {
+              'query': event.queryStringParameters.s,
+              'analyzer': 'standard'
+            }
+          }
+        }
+      };
+    }
+  }
+
   // Search for the document.
-    var response = await client.search({
-        index: "phones",
-        body: {},
-        size:10
-    });
+    var response = await client.search(params);
 
     for (var hit of response.body.hits.hits) {
-      phones.push({
+      phones.phones.push({
         id: hit._id,
         brand: hit._source.brand,
         model: hit._source.model,
@@ -30,6 +59,7 @@ export const listPhones = async (event) => {
         variants: hit._source.variants
       });
     }
+    phones.total = response.body.hits.total.value;
 
   // Return the data
   return {
