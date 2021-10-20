@@ -69,7 +69,6 @@ export const updateOperator = async (event) => {
         }
       }
     });
-    
   } catch (e) {
     console.log(e);
     message = e;
