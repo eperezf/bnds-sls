@@ -28,10 +28,6 @@ export const updatePhone = async (event) => {
 
   var data = JSON.parse(event.body);
   var id = event.pathParameters.id;
-
-  console.log(id);
-  console.log(data);
-
   try {
     let params = {
       TableName: tableName,
@@ -41,14 +37,14 @@ export const updatePhone = async (event) => {
       },
       UpdateExpression: "set #b = :b, #m = :m, #e = :e",
       ExpressionAttributeValues: {
-        ":b": data.name,
+        ":b": data.brand,
         ":m": data.model,
         ":e": data.enabled,
         ":id": "PHONE#"+id
       },
       ExpressionAttributeNames: {
-        "#b": "name",
-        "#m": "webUrl",
+        "#b": "brand",
+        "#m": "model",
         "#e": "enabled",
       },
       ReturnValues: "UPDATED_NEW",
@@ -63,7 +59,7 @@ export const updatePhone = async (event) => {
       id: id,
       body: {
         doc: {
-          'name': data.name,
+          'brand': data.brand,
           'model': data.model,
           'enabled': data.enabled
         }
