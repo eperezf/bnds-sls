@@ -304,6 +304,7 @@ functions:
       - http:
           method: put
           path: phone/{id}
+          cors: true
           authorizer:
             arn: ${self:custom.authorizer.${opt:stage, self:custom.defaultStage}}
   # DELETE a phone
