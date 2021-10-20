@@ -3,7 +3,7 @@ const { DynamoDBClient} = require("@aws-sdk/client-dynamodb");
 const { Client } = require('@opensearch-project/opensearch');
 
 // Update an operator
-export const updateOperator = async (event) => {
+export const updatePhone = async (event) => {
 
   // Parse and configure claims and data
   var status = 200;
