@@ -309,6 +309,21 @@ functions:
             arn: ${self:custom.authorizer.${opt:stage, self:custom.defaultStage}}
   # DELETE a phone
 
+  # /variant
+  # CREATE a variant
+  createVariant:
+    handler: src/variant/post.createVariant
+    events:
+      - http:
+          method: post
+          path: variant
+          cors: true
+          authorizer:
+            arn: ${self:custom.authorizer.${opt:stage, self:custom.defaultStage}}
+  # READ a variant
+  # UPDATE a variant
+  # DELETE a variant
+
   # /login
 
   # Login the user
