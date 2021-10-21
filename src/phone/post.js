@@ -58,6 +58,8 @@ export const createPhone = async (event) => {
     };
     // Save the phone in DynamoDB
     let phone = await docClient.put(params);
+    console.log("DYNAMODB RESULT:");
+    console.log(phone);
     result = phone;
     // Create the OpenSearch command
     let document = {
@@ -74,6 +76,7 @@ export const createPhone = async (event) => {
       body: document,
       refresh:true
     });
+    console.log("OPENSEARCH RESULT:");
     console.log(osResponse);
     // Create the S3 command
     const command = new PutObjectCommand({
