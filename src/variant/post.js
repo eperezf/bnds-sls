@@ -65,6 +65,7 @@ export const createVariant = async (event) => {
         'model': data.model,
         'variant': data.name,
         'fullName': data.brand + " " + data.model + " " + data.name,
+        'phone': data.phoneId,
         'enabled': data.enabled,
       };
       await osClient.index({

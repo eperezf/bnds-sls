@@ -61,6 +61,7 @@ export const updatePhone = async (event) => {
         doc: {
           'brand': data.brand,
           'model': data.model,
+          'fullName': data.brand + " " + data.model,
           'enabled': data.enabled
         }
       }
@@ -70,6 +71,36 @@ export const updatePhone = async (event) => {
     message = e;
     status = 500;
     error = true;
+  }
+
+  // Try update the variants
+  try {
+    await osClient.update_by_query({
+      index: 'variants',
+      body: {
+        "query": {
+          "term": {
+            "phone.keyword": id
+          }
+        },
+        "script": {
+          "params": {
+            "brand": data.brand,
+            "model": data.model
+          },
+          "source": `
+            ctx._source.brand = params.brand;
+            ctx._source.model = params.model;
+            ctx._source.fullName = params.brand + ' ' + params.model + ' ' + ctx._source.variant;
+          `
+        }
+      }
+    });
+  } catch (e) {
+    console.log(e);
+    message = e;
+    error = true;
+    status = 500;
   }
 
   // Return the data

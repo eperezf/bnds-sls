@@ -1,6 +1,6 @@
 const { DynamoDBDocument} = require("@aws-sdk/lib-dynamodb");
 const { DynamoDBClient} = require("@aws-sdk/client-dynamodb");
-//const { Client } = require('@opensearch-project/opensearch');
+const { Client } = require('@opensearch-project/opensearch');
 
 // Update a variant
 export const updateVariant = async (event) => {
@@ -22,14 +22,15 @@ export const updateVariant = async (event) => {
   const docClient = DynamoDBDocument.from(dynamoClient, {marshallOptions:{removeUndefinedValues:true}});
 
   // Configure OpenSearch
-  //var osClient = new Client({
-  //  node: "https://" + process.env.OPENSEARCH_USER + ":" + process.env.OPENSEARCH_PASSWORD + "@" + process.env.OPENSEARCH_ENDPOINT
-  //});
+  var osClient = new Client({
+    node: "https://" + process.env.OPENSEARCH_USER + ":" + process.env.OPENSEARCH_PASSWORD + "@" + process.env.OPENSEARCH_ENDPOINT
+  });
 
   var data = JSON.parse(event.body);
   var phoneId = event.pathParameters.phoneId;
   var variantId = event.pathParameters.variantId;
 
+  // Try updating variant in DynamoDB
   try {
     let params = {
       TableName: tableName,
@@ -37,7 +38,7 @@ export const updateVariant = async (event) => {
         PK: "PHONE#"+phoneId,
         SK: "VARIANT#"+variantId
       },
-      UpdateExpression: "set #n = :n, #u = :u, #e = :e, #t = :t, #f = :f",
+      UpdateExpression: "set #n = :n, #e = :e, #t = :t, #f = :f",
       ExpressionAttributeValues: {
         ":n": data.name,
         ":e": data.enabled,
@@ -57,22 +58,62 @@ export const updateVariant = async (event) => {
     };
     var operatorUpdate = await docClient.update(params);
     result = operatorUpdate;
-    /*
+  } catch (e) {
+    console.log("DynamoDB Error while updating variant:");
+    console.log(e);
+    error = true;
+    status = 500;
+    message = e;
+  }
+
+  // Try updating Phone in OpenSearch
+  try {
+    let document = {
+      "script": {
+        "params":{
+          "ogName": data.ogName,
+          "variant": data.name,
+        },
+        "source": `
+          if (ctx._source.variants.contains(params.ogName)){
+            ctx._source.variants.remove(ctx._source.variants.indexOf(params['ogName']))
+          }
+          ctx._source.variants.add(params.variant)`,
+        "lang": "painless",
+      },
+    };
+    await osClient.update({
+      index: 'phones',
+      id: phoneId,
+      body: document
+    });
+  } catch (e) {
+    console.log("OpenSearch Error while updating phone:");
+    console.log(e.meta.body.error);
+    message = e;
+    status = 500;
+    error = true;
+  }
+
+  // Try updating variant in OpenSearch
+  try {
+    let document = {
+      "script": {
+        "params":{
+          "variant": data.name
+        },
+        "source": "ctx._source.fullName = ctx._source.brand + ' ' + ctx._source.model + ' ' + params.variant; ctx._source.variant = params.variant",
+        "lang": "painless",
+      },
+    };
     await osClient.update({
       index: 'variants',
-      id: id,
-      body: {
-        doc: {
-          'brand': data.brand,
-          'model': data.model,
-          'enabled': data.enabled
-        }
-      }
+      id: variantId,
+      body: document
     });
-    */
-
   } catch (e) {
-    console.log(e);
+    console.log("OpenSearch Error while updating variants:");
+    console.log(e.meta.body.error);
     message = e;
     status = 500;
     error = true;
