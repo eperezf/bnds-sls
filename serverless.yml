@@ -323,7 +323,7 @@ functions:
   # READ a variant
   # UPDATE a variant
   updateVariant:
-    handler: src/phone/put.updateVariant
+    handler: src/variant/put.updateVariant
     events:
       - http:
           method: put
