@@ -327,7 +327,7 @@ functions:
     events:
       - http:
           method: put
-          path: phone/{phoneId}/{variantId}
+          path: variant/{phoneId}/{variantId}
           cors: true
           authorizer:
             arn: ${self:custom.authorizer.${opt:stage, self:custom.defaultStage}}
