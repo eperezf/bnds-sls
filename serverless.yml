@@ -322,6 +322,15 @@ functions:
             arn: ${self:custom.authorizer.${opt:stage, self:custom.defaultStage}}
   # READ a variant
   # UPDATE a variant
+  updateVariant:
+    handler: src/phone/put.updateVariant
+    events:
+      - http:
+          method: put
+          path: phone/{phoneId}/{variantId}
+          cors: true
+          authorizer:
+            arn: ${self:custom.authorizer.${opt:stage, self:custom.defaultStage}}
   # DELETE a variant
 
   # /login
