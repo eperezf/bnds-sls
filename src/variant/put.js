@@ -1,6 +1,6 @@
 const { DynamoDBDocument} = require("@aws-sdk/lib-dynamodb");
 const { DynamoDBClient} = require("@aws-sdk/client-dynamodb");
-const { Client } = require('@opensearch-project/opensearch');
+//const { Client } = require('@opensearch-project/opensearch');
 
 // Update a variant
 export const updateVariant = async (event) => {
@@ -22,9 +22,9 @@ export const updateVariant = async (event) => {
   const docClient = DynamoDBDocument.from(dynamoClient, {marshallOptions:{removeUndefinedValues:true}});
 
   // Configure OpenSearch
-  var osClient = new Client({
-    node: "https://" + process.env.OPENSEARCH_USER + ":" + process.env.OPENSEARCH_PASSWORD + "@" + process.env.OPENSEARCH_ENDPOINT
-  });
+  //var osClient = new Client({
+  //  node: "https://" + process.env.OPENSEARCH_USER + ":" + process.env.OPENSEARCH_PASSWORD + "@" + process.env.OPENSEARCH_ENDPOINT
+  //});
 
   var data = JSON.parse(event.body);
   var phoneId = event.pathParameters.phoneId;
@@ -35,7 +35,7 @@ export const updateVariant = async (event) => {
       TableName: tableName,
       Key: {
         PK: "PHONE#"+phoneId,
-        SK: "VARIANT#"+id
+        SK: "VARIANT#"+variantId
       },
       UpdateExpression: "set #n = :n, #u = :u, #e = :e, #t = :t, #f = :f",
       ExpressionAttributeValues: {
