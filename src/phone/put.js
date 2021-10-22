@@ -1,6 +1,8 @@
 const { DynamoDBDocument} = require("@aws-sdk/lib-dynamodb");
 const { DynamoDBClient} = require("@aws-sdk/client-dynamodb");
 const { Client } = require('@opensearch-project/opensearch');
+const { getSignedUrl } = require("@aws-sdk/s3-request-presigner");
+const { S3Client, PutObjectCommand } = require("@aws-sdk/client-s3");
 
 // Update an operator
 export const updatePhone = async (event) => {
@@ -25,6 +27,9 @@ export const updatePhone = async (event) => {
   var osClient = new Client({
     node: "https://" + process.env.OPENSEARCH_USER + ":" + process.env.OPENSEARCH_PASSWORD + "@" + process.env.OPENSEARCH_ENDPOINT
   });
+
+  // Configure S3
+  const S3client = new S3Client();
 
   var data = JSON.parse(event.body);
   var id = event.pathParameters.id;
@@ -102,6 +107,25 @@ export const updatePhone = async (event) => {
     error = true;
     status = 500;
   }
+
+  // Try to create signed URL for S3
+  try {
+    // Create the S3 command
+    const command = new PutObjectCommand({
+      Bucket:process.env.AWS_S3_BUCKET_NAME,
+      Key:"phones/"+id+".png",
+      ACL: 'public-read'
+    });
+    // Get the signed URL
+    const url = await getSignedUrl(S3client, command, {expiresIn: 600});
+    result.uploadUrl=url;
+  } catch (e) {
+    console.log(e);
+    error = true;
+    status = 500;
+    message = e;
+  }
+
 
   // Return the data
   return {

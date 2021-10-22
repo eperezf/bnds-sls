@@ -308,6 +308,15 @@ functions:
           authorizer:
             arn: ${self:custom.authorizer.${opt:stage, self:custom.defaultStage}}
   # DELETE a phone
+  deletePhone:
+    handler: src/phone/delete.deletePhone
+    events:
+      - http:
+          method: delete
+          path: phone/{id}
+          cors: true
+          authorizer:
+            arn: ${self:custom.authorizer.${opt:stage, self:custom.defaultStage}}
 
   # /variant
   # CREATE a variant
@@ -320,7 +329,7 @@ functions:
           cors: true
           authorizer:
             arn: ${self:custom.authorizer.${opt:stage, self:custom.defaultStage}}
-  # READ a variant
+  # READ a variant (NOT USED)
   # UPDATE a variant
   updateVariant:
     handler: src/variant/put.updateVariant
@@ -332,6 +341,15 @@ functions:
           authorizer:
             arn: ${self:custom.authorizer.${opt:stage, self:custom.defaultStage}}
   # DELETE a variant
+  deleteVariant:
+    handler: src/variant/delete.deleteVariant
+    events:
+      - http:
+          method: delete
+          path: variant/{phoneId}/{variantId}
+          cors: true
+          authorizer:
+            arn: ${self:custom.authorizer.${opt:stage, self:custom.defaultStage}}
 
   # /login
 
