@@ -71,7 +71,7 @@ export const createPhone = async (event) => {
     // Save the phone in OpenSearch
     await osClient.index({
       id: id,
-      index:"phones",
+      index:process.env.OPENSEARCH_PHONE_INDEX,
       body: document,
       refresh:true
     });

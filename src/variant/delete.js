@@ -67,7 +67,7 @@ export const deleteVariant = async (event) => {
   // Try deleting in OpenSearch
   try {
     await osClient.delete({
-      index: "variants",
+      index: process.env.OPENSEARCH_VARIANT_INDEX,
       id: event.pathParameters.variantId
     });
   } catch (e) {
@@ -94,7 +94,7 @@ export const deleteVariant = async (event) => {
       },
     };
     await osClient.update({
-      index: 'phones',
+      index: process.env.OPENSEARCH_PHONE_INDEX,
       id: event.pathParameters.phoneId,
       body: document
     });

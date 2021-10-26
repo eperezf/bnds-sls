@@ -21,7 +21,7 @@ export const listPhones = async (event) => {
   // If there's a page parameter, set the From correctly (only 10 by 10 for now)
   let from = 0;
   let params = {
-    index: "phones",
+    index: process.env.OPENSEARCH_PHONE_INDEX,
     body: {},
     size:10,
     from: from,

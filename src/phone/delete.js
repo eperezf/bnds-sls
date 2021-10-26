@@ -79,7 +79,7 @@ export const deletePhone = async (event) => {
   // Try deleting phone in OpenSearch
   try {
     await osClient.delete({
-      index: "phones",
+      index: process.env.OPENSEARCH_PHONE_INDEX,
       id: event.pathParameters.id
     });
   } catch (e) {
@@ -100,7 +100,7 @@ export const deletePhone = async (event) => {
       }
     };
     await osClient.deleteByQuery({
-      index: 'variants',
+      index: process.env.OPENSEARCH_VARIANT_INDEX,
       id: event.pathParameters.phoneId,
       body: document
     });

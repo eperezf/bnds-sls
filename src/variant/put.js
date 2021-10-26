@@ -83,7 +83,7 @@ export const updateVariant = async (event) => {
       },
     };
     await osClient.update({
-      index: 'phones',
+      index: process.env.OPENSEARCH_PHONE_INDEX,
       id: phoneId,
       body: document
     });
@@ -107,7 +107,7 @@ export const updateVariant = async (event) => {
       },
     };
     await osClient.update({
-      index: 'variants',
+      index: process.env.OPENSEARCH_VARIANT_INDEX,
       id: variantId,
       body: document
     });

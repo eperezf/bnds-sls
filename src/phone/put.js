@@ -62,7 +62,7 @@ export const updatePhone = async (event) => {
     result = operatorUpdate;
 
     await osClient.update({
-      index: 'phones',
+      index: process.env.OPENSEARCH_PHONE_INDEX,
       id: id,
       body: {
         doc: {
