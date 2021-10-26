@@ -40,10 +40,11 @@ export const updatePhone = async (event) => {
         PK: "PHONE#"+id,
         SK: "DATA"
       },
-      UpdateExpression: "set #b = :b, #m = :m, #e = :e",
+      UpdateExpression: "set #b = :b, #m = :m, #r = :r, #e = :e",
       ExpressionAttributeValues: {
         ":b": data.brand,
         ":m": data.model,
+        ":r": data.review,
         ":e": data.enabled,
         ":id": "PHONE#"+id
       },

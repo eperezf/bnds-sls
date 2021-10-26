@@ -113,6 +113,7 @@ export const getPhone = async (event) => {
           phoneData.id = phone.PK.replace("PHONE#","");
           phoneData.brand = phone.brand;
           phoneData.model = phone.model;
+          phoneData.review = phone.review;
           phoneData.enabled = phone.enabled;
         }
         else if (phone.SK.startsWith("VARIANT")) {
