@@ -53,7 +53,7 @@ export const createPhone = async (event) => {
         SK: "DATA",
         brand: data.brand,
         model: data.model,
-        review: dat.review,
+        review: data.review,
         enabled: data.enabled,
       }
     };
