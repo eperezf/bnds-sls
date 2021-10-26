@@ -51,6 +51,7 @@ export const updatePhone = async (event) => {
       ExpressionAttributeNames: {
         "#b": "brand",
         "#m": "model",
+        "#r": "review",
         "#e": "enabled",
       },
       ReturnValues: "UPDATED_NEW",
