@@ -33,6 +33,9 @@ export const updatePhone = async (event) => {
 
   var data = JSON.parse(event.body);
   var id = event.pathParameters.id;
+  if (!data.review) {
+    data.review = "";
+  }
   try {
     let params = {
       TableName: tableName,
