@@ -30,9 +30,8 @@ export const listPhones = async (event) => {
   if (event.queryStringParameters) {
     // If a page was selected, change the query
     if (event.queryStringParameters.p) {
-      console.log("Page " + event.queryStringParameters.p + " requested");
       from+=(10*(event.queryStringParameters.p-1));
-      console.log("Start from item " + from);
+      params.from = from;
     }
     // If a search term was sent, set the search data
     if (event.queryStringParameters.s) {
