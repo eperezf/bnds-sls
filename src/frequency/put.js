@@ -47,7 +47,7 @@ export const updateFrequency = async (event) => {
     var generationUpdate = await docClient.update(params);
     result = generationUpdate;
   } catch (e) {
-    console.log(e);
+    console.error(e);
     if (e.name == "ConditionalCheckFailedException") {
       message = "Frequency not found";
       status = 404;

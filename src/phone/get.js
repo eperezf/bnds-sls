@@ -10,8 +10,6 @@ export const listPhones = async (event) => {
   var phones = {};
   phones.phones = [];
   var error = false;
-  console.log(event.queryStringParameters);
-
 
   // Configure OpenSearch
   var client = new Client({
@@ -61,7 +59,7 @@ export const listPhones = async (event) => {
       });
     }
     phones.total = response.body.hits.total.value;
-    console.log(phones.phones);
+    console.error(phones.phones);
 
   // Return the data
   return {
@@ -85,8 +83,6 @@ export const getPhone = async (event) => {
   // Parse and configure claims and data
   var status = 200;
   var message = "ok";
-  const data = event.pathParameters;
-  console.log(data);
   var phoneData = {};
   phoneData.variants = [];
 
@@ -110,7 +106,6 @@ export const getPhone = async (event) => {
     var result = await docClient.query(params);
     if (result.Items[0]) {
       for (var phone of result.Items) {
-        console.log(phone);
         if (phone.SK == "DATA") {
           phoneData.id = phone.PK.replace("PHONE#","");
           phoneData.brand = phone.brand;
@@ -130,7 +125,7 @@ export const getPhone = async (event) => {
       message = "Phone not found";
     }
   } catch (e) {
-    console.log(e);
+    console.error(e);
     status = 500;
     message = e;
   }

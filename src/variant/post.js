@@ -50,7 +50,7 @@ export const createVariant = async (event) => {
       let phone = await docClient.put(params);
       result = phone;
     } catch (e) {
-      console.log(e);
+      console.error(e);
       error = true;
       status = 500;
       message = e;
@@ -75,7 +75,7 @@ export const createVariant = async (event) => {
         refresh:true
       });
     } catch (e) {
-      console.log(e);
+      console.error(e);
       error = true;
       status = 500;
       message = e;
@@ -101,7 +101,7 @@ export const createVariant = async (event) => {
         refresh:true
       });
     } catch (e) {
-      console.log(e);
+      console.error(e);
       error = true;
       status = 500;
       message = e;

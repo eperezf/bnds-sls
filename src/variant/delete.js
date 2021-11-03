@@ -39,8 +39,8 @@ export const deleteVariant = async (event) => {
     let variantResult = await docClient.get(params);
     variantData = variantResult.Item;
   } catch (e) {
-    console.log("Error getting variant data from DynamoDB:");
-    console.log(e);
+    console.error("Error getting variant data from DynamoDB:");
+    console.error(e);
     error = true;
     status = 500;
     message = e;
@@ -57,8 +57,8 @@ export const deleteVariant = async (event) => {
     };
     result = await docClient.delete(params);
   } catch (e) {
-    console.log("Error deleting variant from DynamoDB:");
-    console.log(e);
+    console.error("Error deleting variant from DynamoDB:");
+    console.error(e);
     error = true;
     status = 500;
     message = e;
@@ -71,8 +71,8 @@ export const deleteVariant = async (event) => {
       id: event.pathParameters.variantId
     });
   } catch (e) {
-    console.log("Error deleting variant from OpenSearch:");
-    console.log(e);
+    console.error("Error deleting variant from OpenSearch:");
+    console.error(e);
     error = true;
     status = 500;
     message = e;
@@ -99,8 +99,8 @@ export const deleteVariant = async (event) => {
       body: document
     });
   } catch (e) {
-    console.log("Error updating phone in OpenSearch:");
-    console.log(e);
+    console.error("Error updating phone in OpenSearch:");
+    console.error(e);
     error = true;
     status = 500;
     message = e;

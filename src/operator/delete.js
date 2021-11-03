@@ -40,7 +40,7 @@ export const deleteOperator = async (event) => {
   } catch (e) {
     error = true;
     status = 500;
-    console.log(e);
+    console.error(e);
   }
 
   // If it exists, delete it.
@@ -56,6 +56,7 @@ export const deleteOperator = async (event) => {
       var operatorDelete = await docClient.delete(params);
       var result = operatorDelete;
     } catch (e) {
+      console.error(e);
       message = e;
       status = 500;
       error = true;

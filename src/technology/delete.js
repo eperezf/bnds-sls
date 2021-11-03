@@ -39,7 +39,10 @@ export const deleteTechnology = async (event) => {
       status = 404;
     }
   } catch (e) {
-    console.log(e);
+    error = true;
+    status = 500;
+    message = e;
+    console.error(e);
   }
 
   // If it exists, delete it.
@@ -55,6 +58,7 @@ export const deleteTechnology = async (event) => {
       var technologyDelete = await docClient.delete(params);
       var result = technologyDelete;
     } catch (e) {
+      console.error(e);
       message = e;
       status = 500;
       error = true;

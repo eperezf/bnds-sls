@@ -62,7 +62,7 @@ export const createOperator = async (event) => {
     result.uploadUrl=url;
 
   } catch (e) {
-    console.log(e);
+    console.error(e);
     message = "Error agregando Operadora";
     error = e;
     status = 500;

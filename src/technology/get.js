@@ -38,7 +38,7 @@ export const listTechnologies = async (event) => {
       delete technology.SK;
     }
   } catch (e) {
-    console.log(e);
+    console.error(e);
     error = true;
     message = e;
     status = 500;
@@ -100,9 +100,10 @@ export const getTechnology = async (event) => {
     }
     technology = gen.Item;
   } catch (e) {
+    message = e;
     error = true;
     status = 500;
-    console.log(e);
+    console.error(e);
   }
   // Return the data
   return {

@@ -45,7 +45,7 @@ export const updateTechnology = async (event) => {
     var technologyUpdate = await docClient.update(params);
     result = technologyUpdate;
   } catch (e) {
-    console.log(e);
+    console.error(e);
     if (e.name == "ConditionalCheckFailedException") {
       message = "Technology not found";
       status = 404;

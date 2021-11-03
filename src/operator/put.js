@@ -22,9 +22,6 @@ export const updateOperator = async (event) => {
   var data = JSON.parse(event.body);
   var id = event.pathParameters.id;
 
-  console.log(id);
-  console.log(data);
-
   try {
     let params = {
       TableName: tableName,
@@ -55,7 +52,7 @@ export const updateOperator = async (event) => {
     var operatorUpdate = await docClient.update(params);
     result = operatorUpdate;
   } catch (e) {
-    console.log(e);
+    console.error(e);
     message = e;
     status = 500;
     error = true;

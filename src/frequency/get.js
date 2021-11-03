@@ -63,11 +63,14 @@ export const listFrequencies = async (event) => {
         }
 
       } catch (e) {
-        console.log(e);
+        console.error(e);
+        error = true;
+        message = e;
+        status = 500;
       }
     }
   } catch (e) {
-    console.log(e);
+    console.error(e);
     error = true;
     message = e;
     status = 500;
@@ -137,7 +140,8 @@ export const getFrequency = async (event) => {
       }
       frequency = freq.Item;
     } catch (e) {
-      console.log(e);
+      message = e;
+      console.error(e);
       error = true;
       status = 500;
     }

@@ -51,8 +51,8 @@ export const loginUser = async (event) => {
     }
 
   } catch (e) {
-    console.log("ERROR");
-    console.log(e);
+    console.error("ERROR");
+    console.error(e);
     message = e.name;
     error = true;
     status = 200;
@@ -115,8 +115,8 @@ export const refreshToken = async (event) => {
       "accessToken": accessToken
     };
   } catch (e) {
-    console.log("ERROR");
-    console.log(e);
+    console.error("ERROR");
+    console.error(e);
     message = e.name;
     error = true;
     status = 200;

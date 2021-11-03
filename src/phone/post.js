@@ -12,7 +12,6 @@ export const createPhone = async (event) => {
   var result = {};
   var error = false;
   const data = JSON.parse(event.body);
-  console.log(data);
 
   // Configure DynamoDB
   const tableName = "phones-"+process.env.NODE_ENV;
@@ -86,7 +85,7 @@ export const createPhone = async (event) => {
     result.uploadUrl=url;
 
   } catch (e) {
-    console.log(e);
+    console.error(e);
     message = "Error agregando Teléfono";
     error = e;
     status = 500;

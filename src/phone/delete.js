@@ -44,8 +44,8 @@ export const deletePhone = async (event) => {
     let result = await docClient.query(params);
     phoneVarList = result.Items;
   } catch (e) {
-    console.log("ERROR GETTING PHONE AND VARIANTS:");
-    console.log(e);
+    console.error("ERROR GETTING PHONE AND VARIANTS:");
+    console.error(e);
     error = true;
     status = 500;
     message = e;
@@ -69,8 +69,8 @@ export const deletePhone = async (event) => {
       }
     });
   } catch (e) {
-    console.log("Error deleting variants from DynamoDB:");
-    console.log(e);
+    console.error("Error deleting variants from DynamoDB:");
+    console.error(e);
     error = true;
     status = 500;
     message = e;
@@ -83,8 +83,8 @@ export const deletePhone = async (event) => {
       id: event.pathParameters.id
     });
   } catch (e) {
-    console.log("Error deleting phone from OpenSearch:");
-    console.log(e);
+    console.error("Error deleting phone from OpenSearch:");
+    console.error(e);
     error = true;
     status = 500;
     message = e;
@@ -105,8 +105,8 @@ export const deletePhone = async (event) => {
       body: document
     });
   } catch (e) {
-    console.log("Error deleting variants in OpenSearch:");
-    console.log(e);
+    console.error("Error deleting variants in OpenSearch:");
+    console.error(e);
     error = true;
     status = 500;
     message = e;

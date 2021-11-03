@@ -34,7 +34,7 @@ export const createTechnology = async (event) => {
   try {
     genData = await docClient.put(params);
   } catch (e) {
-    console.log(e);
+    console.error(e);
     error = true;
     status = 500;
     message = e;

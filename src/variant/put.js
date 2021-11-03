@@ -59,8 +59,8 @@ export const updateVariant = async (event) => {
     var operatorUpdate = await docClient.update(params);
     result = operatorUpdate;
   } catch (e) {
-    console.log("DynamoDB Error while updating variant:");
-    console.log(e);
+    console.error("DynamoDB Error while updating variant:");
+    console.error(e);
     error = true;
     status = 500;
     message = e;
@@ -88,8 +88,8 @@ export const updateVariant = async (event) => {
       body: document
     });
   } catch (e) {
-    console.log("OpenSearch Error while updating phone:");
-    console.log(e.meta.body.error);
+    console.error("OpenSearch Error while updating phone:");
+    console.error(e.meta.body.error);
     message = e;
     status = 500;
     error = true;
@@ -112,8 +112,8 @@ export const updateVariant = async (event) => {
       body: document
     });
   } catch (e) {
-    console.log("OpenSearch Error while updating variants:");
-    console.log(e.meta.body.error);
+    console.error("OpenSearch Error while updating variants:");
+    console.error(e.meta.body.error);
     message = e;
     status = 500;
     error = true;

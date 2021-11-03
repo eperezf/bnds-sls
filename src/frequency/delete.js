@@ -37,7 +37,10 @@ export const deleteFrequency = async (event) => {
       status = 404;
     }
   } catch (e) {
-    console.log(e);
+    message = e;
+    status = 500;
+    error = true;
+    console.error(e);
   }
 
   // If it exists, delete it.
@@ -56,6 +59,7 @@ export const deleteFrequency = async (event) => {
       message = e;
       status = 500;
       error = true;
+      console.error(e);
     }
   }
   // Return the data

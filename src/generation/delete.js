@@ -39,7 +39,10 @@ export const deleteGeneration = async (event) => {
       status = 404;
     }
   } catch (e) {
-    console.log(e);
+    error = true;
+    status = 500;
+    message = e;
+    console.error(e);
   }
 
   // If it exists, delete it.
@@ -56,6 +59,7 @@ export const deleteGeneration = async (event) => {
       var result = generationDelete;
     } catch (e) {
       message = e;
+      console.error(e);
       status = 500;
       error = true;
     }

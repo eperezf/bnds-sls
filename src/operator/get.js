@@ -36,7 +36,7 @@ export const listOperators = async (event) => {
         }
       }
     } catch (e) {
-      console.log(e);
+      console.error(e);
       status = 500;
       message = e;
     }
@@ -100,7 +100,7 @@ export const getOperator = async (event) => {
     error = true;
     status = 500;
     message = e;
-    console.log(e);
+    console.error(e);
   }
   // Return the data
   return {

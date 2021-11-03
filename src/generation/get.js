@@ -38,7 +38,7 @@ export const listGenerations = async (event) => {
       delete generation.SK;
     }
   } catch (e) {
-    console.log(e);
+    console.error(e);
     error = true;
     message = e;
     status = 500;
@@ -100,7 +100,10 @@ export const getGeneration = async (event) => {
     }
     generation = gen.Item;
   } catch (e) {
-    console.log(e);
+    status = 500;
+    message = e;
+    error = true;
+    console.error(e);
   }
   // Return the data
   return {

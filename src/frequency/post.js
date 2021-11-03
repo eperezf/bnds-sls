@@ -26,14 +26,12 @@ export const createFrequency = async (event) => {
   console.log(data);
   // If some data is empty, reject it (shouldn't happen)
   if (data.generation == "" || !data.generation) {
-    console.log("GEN IS EMPTY");
     status = 500;
     error = true;
     message = "Missing parameters";
   }
 
   if(data.name == "" || !data.name){
-    console.log("NAME IS EMPTY");
     status = 500;
     error = true;
     message = "Missing parameters";
@@ -60,13 +58,14 @@ export const createFrequency = async (event) => {
       status = 404;
     }
   } catch (e) {
-    console.log(e);
+    error = true;
+    status = 500;
+    message = e;
+    console.error(e);
   }
 
   if (!error){
     // Add the frequency to the db
-    console.log(data);
-
     var frequency = {};
     try {
       let id = nanoid(6);
@@ -83,7 +82,7 @@ export const createFrequency = async (event) => {
       frequency = await docClient.put(params);
       result = frequency;
     } catch (e) {
-      console.log(e);
+      console.error(e);
       message = "Error agregando frecuencia";
       error = e;
       status = 500;

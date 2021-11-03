@@ -45,7 +45,7 @@ export const updateGeneration = async (event) => {
     var generationUpdate = await docClient.update(params);
     result = generationUpdate;
   } catch (e) {
-    console.log(e);
+    console.error(e);
     if (e.name == "ConditionalCheckFailedException") {
       message = "Generation not found";
       status = 404;

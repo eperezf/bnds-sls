@@ -77,7 +77,7 @@ export const updatePhone = async (event) => {
       }
     });
   } catch (e) {
-    console.log(e);
+    console.error(e);
     message = e;
     status = 500;
     error = true;
@@ -107,7 +107,7 @@ export const updatePhone = async (event) => {
       }
     });
   } catch (e) {
-    console.log(e);
+    console.error(e);
     message = e;
     error = true;
     status = 500;
@@ -125,7 +125,7 @@ export const updatePhone = async (event) => {
     const url = await getSignedUrl(S3client, command, {expiresIn: 600});
     result.uploadUrl=url;
   } catch (e) {
-    console.log(e);
+    console.error(e);
     error = true;
     status = 500;
     message = e;
