@@ -86,7 +86,7 @@ export const updatePhone = async (event) => {
   // Try update the variants
   try {
     await osClient.update_by_query({
-      index: 'variants',
+      index: process.env.OPENSEARCH_VARIANT_INDEX,
       body: {
         "query": {
           "term": {
