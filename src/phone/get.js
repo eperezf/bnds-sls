@@ -59,7 +59,6 @@ export const listPhones = async (event) => {
       });
     }
     phones.total = response.body.hits.total.value;
-    console.error(phones.phones);
 
   // Return the data
   return {
