@@ -10,12 +10,10 @@ export const listPhones = async (event) => {
   var phones = {};
   phones.phones = [];
   var error = false;
-
   // Configure OpenSearch
   var client = new Client({
     node: "https://" + process.env.OPENSEARCH_USER + ":" + process.env.OPENSEARCH_PASSWORD + "@" + process.env.OPENSEARCH_ENDPOINT
   });
-
   // If there's a page parameter, set the From correctly (only 10 by 10 for now)
   let from = 0;
   let params = {
@@ -45,10 +43,9 @@ export const listPhones = async (event) => {
       };
     }
   }
-
-  // Search for the document.
+  try {
+    // Search for the document.
     var response = await client.search(params);
-
     for (var hit of response.body.hits.hits) {
       phones.phones.push({
         id: hit._id,
@@ -59,6 +56,12 @@ export const listPhones = async (event) => {
       });
     }
     phones.total = response.body.hits.total.value;
+  } catch (e) {
+    console.error(e);
+    statusCode = 500;
+    error = true;
+    message = e;
+  }
 
   // Return the data
   return {
