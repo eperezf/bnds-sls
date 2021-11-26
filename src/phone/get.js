@@ -58,7 +58,7 @@ export const listPhones = async (event) => {
     phones.total = response.body.hits.total.value;
   } catch (e) {
     console.error(e);
-    statusCode = 500;
+    status = 500;
     error = true;
     message = e;
   }
