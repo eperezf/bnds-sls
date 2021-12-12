@@ -73,6 +73,7 @@ export const updateVariant = async (event) => {
         "params":{
           "ogName": data.ogName,
           "variant": data.name,
+
         },
         "source": `
           if (ctx._source.variants.contains(params.ogName)){
@@ -100,7 +101,8 @@ export const updateVariant = async (event) => {
     let document = {
       "script": {
         "params":{
-          "variant": data.name
+          "variant": data.name,
+          "enabled": data.enabled
         },
         "source": "ctx._source.fullName = ctx._source.brand + ' ' + ctx._source.model + ' ' + params.variant; ctx._source.variant = params.variant",
         "lang": "painless",

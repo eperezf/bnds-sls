@@ -4,7 +4,7 @@ const { Client } = require('@opensearch-project/opensearch');
 const { getSignedUrl } = require("@aws-sdk/s3-request-presigner");
 const { S3Client, PutObjectCommand } = require("@aws-sdk/client-s3");
 
-// Update an operator
+// Update a phone
 export const updatePhone = async (event) => {
 
   // Parse and configure claims and data
@@ -96,7 +96,8 @@ export const updatePhone = async (event) => {
         "script": {
           "params": {
             "brand": data.brand,
-            "model": data.model
+            "model": data.model,
+            "enabled": data.enabled,
           },
           "source": `
             ctx._source.brand = params.brand;

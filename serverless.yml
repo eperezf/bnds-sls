@@ -370,6 +370,17 @@ functions:
           path: refresh
           cors: true
 
+  # /search
+
+  # Autocomplete the phone
+  autocomplete:
+    handler: src/search/get.autocomplete
+    events:
+      - http:
+          method: get
+          path: autocomplete
+          cors: true
+
 
 
 # Resources
