@@ -2,7 +2,6 @@ const { DynamoDBDocument } = require("@aws-sdk/lib-dynamodb");
 const { DynamoDBClient} = require("@aws-sdk/client-dynamodb");
 
 export const listOperators = async (event) => {
-
   // Parse and configure claims and data
   var status = 200;
   var message = "ok";

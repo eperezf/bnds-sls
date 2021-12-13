@@ -1,5 +1,5 @@
-//const { DynamoDBDocument } = require("@aws-sdk/lib-dynamodb");
-//const { DynamoDBClient} = require("@aws-sdk/client-dynamodb");
+const { DynamoDBDocument } = require("@aws-sdk/lib-dynamodb");
+const { DynamoDBClient} = require("@aws-sdk/client-dynamodb");
 const { Client } = require('@opensearch-project/opensearch');
 
 export const autocomplete = async (event) => {
@@ -63,6 +63,63 @@ export const autocomplete = async (event) => {
         phones: phones,
         error: error,
         message: message
+      },
+      null,
+      2
+    ),
+  };
+};
+
+export const operators = async (event) => {
+  // Parse and configure claims and data
+  var status = 200;
+  var message = "ok";
+  var error = false;
+
+  // Configure DynamoDB
+  const tableName = "operators-"+process.env.NODE_ENV;
+  const dynamoClient = new DynamoDBClient({region: "us-east-1", endpoint: process.env.DYNAMODB_ENDPOINT});
+  const docClient = DynamoDBDocument.from(dynamoClient);
+
+    var params = {
+      TableName: tableName,
+      KeyConditionExpression: "PK = :PK",
+      FilterExpression: "#enabled = true",
+      ExpressionAttributeValues: {
+        ":PK": "OPERATORS",
+      },
+      ExpressionAttributeNames: {
+        "#name": "name",
+        "#enabled": "enabled"
+      },
+      ProjectionExpression:"#name,SK"
+    };
+    var resultData;
+    try {
+      resultData = await docClient.query(params);
+      if (resultData.Items.length > 0) {
+        for (var item of resultData.Items) {
+          item.id = item.SK.replace("OPERATOR#","");
+          delete item.SK;
+          delete item.PK;
+        }
+      }
+    } catch (e) {
+      console.error(e);
+      status = 500;
+      message = e;
+    }
+  // Return the data
+  return {
+    statusCode: status,
+    headers: {
+      "Access-Control-Allow-Origin": "*"
+    },
+    body: JSON.stringify(
+      {
+        operators: resultData.Items,
+        message: message,
+        error: error
       },
       null,
       2

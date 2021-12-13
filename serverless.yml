@@ -378,7 +378,16 @@ functions:
     events:
       - http:
           method: get
-          path: autocomplete
+          path: search/autocomplete
+          cors: true
+
+  # Get the enabled operators and their IDs
+  operators:
+    handler: src/search/get.operators
+    events:
+      - http:
+          method: get
+          path: search/operators
           cors: true
 
 
