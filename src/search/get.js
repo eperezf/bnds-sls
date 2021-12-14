@@ -84,9 +84,10 @@ export const operators = async (event) => {
     var params = {
       TableName: tableName,
       KeyConditionExpression: "PK = :PK",
-      FilterExpression: "#enabled = true",
+      FilterExpression: "#enabled = :true",
       ExpressionAttributeValues: {
         ":PK": "OPERATORS",
+        ":true": true
       },
       ExpressionAttributeNames: {
         "#name": "name",
