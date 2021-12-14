@@ -412,6 +412,7 @@ resources:
             KeyType: HASH
           - AttributeName: SK
             KeyType: RANGE
+        BillingMode: PAY_PER_REQUEST
 
     # Phones table
     phonesTable:
@@ -429,6 +430,7 @@ resources:
             KeyType: HASH
           - AttributeName: SK
             KeyType: RANGE
+        BillingMode: PAY_PER_REQUEST
 
     # Operator table
     operatorsTable:
@@ -446,6 +448,7 @@ resources:
             KeyType: HASH
           - AttributeName: SK
             KeyType: RANGE
+        BillingMode: PAY_PER_REQUEST
 
     # Users table
     usersTable:
@@ -463,6 +466,7 @@ resources:
             KeyType: HASH
           - AttributeName: SK
             KeyType: RANGE
+        BillingMode: PAY_PER_REQUEST
 
     ## COGNITO USER POOLS
 
