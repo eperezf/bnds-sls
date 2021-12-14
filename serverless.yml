@@ -412,9 +412,7 @@ resources:
             KeyType: HASH
           - AttributeName: SK
             KeyType: RANGE
-        ProvisionedThroughput:
-          ReadCapacityUnits: 0
-          WriteCapacityUnits: 0
+
     # Phones table
     phonesTable:
       Type: AWS::DynamoDB::Table
@@ -431,9 +429,7 @@ resources:
             KeyType: HASH
           - AttributeName: SK
             KeyType: RANGE
-        ProvisionedThroughput:
-          ReadCapacityUnits: 0
-          WriteCapacityUnits: 0
+
     # Operator table
     operatorsTable:
       Type: AWS::DynamoDB::Table
@@ -450,9 +446,7 @@ resources:
             KeyType: HASH
           - AttributeName: SK
             KeyType: RANGE
-        ProvisionedThroughput:
-          ReadCapacityUnits: 0
-          WriteCapacityUnits: 0
+
     # Users table
     usersTable:
       Type: AWS::DynamoDB::Table
@@ -469,9 +463,6 @@ resources:
             KeyType: HASH
           - AttributeName: SK
             KeyType: RANGE
-        ProvisionedThroughput:
-          ReadCapacityUnits: 0
-          WriteCapacityUnits: 0
 
     ## COGNITO USER POOLS
 
