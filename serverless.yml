@@ -390,7 +390,14 @@ functions:
           path: search/operators
           cors: true
 
-
+  # Compare a phone variant and an operator to see if they are compatible
+  compare:
+    handler: src/search/post.compare
+    events:
+      - http:
+          method: post
+          path: search/compare
+          cors: true
 
 # Resources
 resources:
