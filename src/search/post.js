@@ -269,7 +269,7 @@ export const compare = async (event) => {
   }
 
   // Sort the generations
-  res.generations.sort((a,b)=>(a.name>b.name?1:-1));
+  res.generations.sort((a,b) => (a.name>b.name?1:-1));
 
   // Put frequencies
   for (var freq of frequencies) {
