@@ -284,11 +284,30 @@ export const compare = async (event) => {
       freq.operator = false;
     }
 
-    // Put frequencies on each generation
+    // Put frequencies on each generation only if the operator has it
     var correspondingGen = res.generations.find(o => o.id === freq.generation);
-    correspondingGen.frequencies.push(freq);
+    if (freq.operator) {
+      correspondingGen.frequencies.push(freq);
+    }
+  }
 
-
+  // Check generations again for total/partial/no compatibility
+  for (var ge of res.generations) {
+    if (ge.frequencies.length == 0) {
+      ge.result = 'nofreq';
+    } else {
+      // Check if all the phone frequencies are compatible.
+      var phoneTotalSuccess = ge.frequencies.every(obj => obj.phone);
+      // If not all are compatible, check if any are compatible
+      if (!phoneTotalSuccess) {
+        var phonePartialSuccess = ge.frequencies.some(obj => obj.phone);
+        if (!phonePartialSuccess) {
+          ge.result = 'error';
+        } else {
+          ge.result = 'partial';
+        }
+      }
+    }
   }
 
   // Clean up IDs and other stuff
@@ -300,8 +319,6 @@ export const compare = async (event) => {
       delete f.generation;
     }
   }
-
-  console.log(res.generations);
 
   return {
     statusCode: status,
