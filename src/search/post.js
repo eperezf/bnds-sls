@@ -240,9 +240,14 @@ export const compare = async (event) => {
   };
 
   // Set technology array
-  res.technologies = [];
+  res.technologies = {};
+  res.technologies.list = [];
+  res.technologies.result = "success";
 
-  // Put technology data
+  // Put technology data and check for compatibility result
+  let both = 0;
+  let opOnly = 0;
+  let none = 0;
   for (var tech of technologies) {
     let techvar = {
       name: tech.name
@@ -257,8 +262,27 @@ export const compare = async (event) => {
     } else {
       techvar.operator = false;
     }
-    res.technologies.push(techvar);
+
+    if (techvar.phone && techvar.operator) {
+      both +=1;
+    } else if (!techvar.phone && techvar.operator) {
+      opOnly +=1;
+    }  else {
+      none +=1;
+    }
+
+    res.technologies.list.push(techvar);
   }
+  if (both == 0) {
+    res.technologies.result = "error";
+  }
+  if (opOnly > 0) {
+    res.technologies.result = "partial";
+  }
+  if (opOnly == 0 && none == 0) {
+    res.technologies.result = "success";
+  }
+
 
   // Set generations (and frequencies) array
   res.generations = [];
