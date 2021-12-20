@@ -145,6 +145,7 @@ export const compare = async (event) => {
         }
       } catch (e) {
         console.error(e);
+        console.log("query: "+data.phone);
         status = 500;
         error = true;
         message = e;
