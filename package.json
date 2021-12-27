@@ -4,7 +4,8 @@
   "description": "bnds-sls",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "serverless-bundle test",
+    "start": "sls offline start --httpPort 3001 --migrate"
   },
   "repository": {
     "type": "git",
@@ -18,12 +19,19 @@
   "homepage": "https://github.com/eperezf/bnds-sls#readme",
   "dependencies": {
     "@aws-sdk/client-dynamodb": "^3.15.0",
-    "@aws-sdk/lib-dynamodb": "^3.15.0"
+    "@aws-sdk/client-s3": "^3.37.0",
+    "@aws-sdk/lib-dynamodb": "^3.15.0",
+    "@aws-sdk/s3-request-presigner": "^3.37.0",
+    "@opensearch-project/opensearch": "^1.0.0",
+    "amazon-cognito-identity-js": "^5.2.0",
+    "axios": "^0.24.0",
+    "nanoid": "^2.1.11"
   },
   "devDependencies": {
-    "serverless-dynamodb-local": "^0.2.39",
-    "serverless-offline": "^7.0.0",
-    "serverless-offline-dotenv": "^0.3.0"
+    "serverless-bundle": "^5.0.0",
+    "serverless-dynamodb-local": "^0.2.4",
+    "serverless-offline": "^8.2.0",
+    "serverless-offline-dotenv": "^0.4.0"
   },
   "jshintConfig": {
     "esversion": 8,

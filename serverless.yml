@@ -1,5 +1,6 @@
 # BNDS API
 
+# API data
 service: bnds
 app: bnds
 useDotenv: true
@@ -22,8 +23,10 @@ provider:
     - Effect: "Allow"
       Action:
         - dynamodb:*
+        - s3:*
       Resource: "*"
 
+# Custom config
 custom:
   defaultStage: offline
 
@@ -36,16 +39,365 @@ custom:
       inMemory: false
 
   # Endpoints configuration
-  # TODO: Set prod authorizer to main pool
   dynamoEndpoint:
     prod: https://dynamodb.us-east-1.amazonaws.com
     dev: https://dynamodb.us-east-1.amazonaws.com
     staging: https://dynamodb.us-east-1.amazonaws.com
     offline: http://localhost:8000
+  authorizer:
+    prod: arn:aws:cognito-idp:us-east-1:243627966343:userpool/us-east-1_uJNhQMaj5
+    dev: arn:aws:cognito-idp:us-east-1:243627966343:userpool/us-east-1_uJNhQMaj5
+    staging: arn:aws:cognito-idp:us-east-1:243627966343:userpool/us-east-1_uJNhQMaj5
+    offline: arn:aws:cognito-idp:us-east-1:243627966343:userpool/us-east-1_uJNhQMaj5
 
+# API Functions
 functions:
-  hello:
-    handler: handler.hello
+
+  # /frequency
+
+  # LIST all frequencies
+  listFrequencies:
+    handler: src/frequency/get.listFrequencies
+    events:
+      - http:
+          method: get
+          path: frequency
+          cors: true
+          authorizer:
+            arn: ${self:custom.authorizer.${opt:stage, self:custom.defaultStage}}
+  # CREATE a frequency
+  createFrequency:
+    handler: src/frequency/post.createFrequency
+    events:
+      - http:
+          method: post
+          path: frequency
+          cors: true
+          authorizer:
+            arn: ${self:custom.authorizer.${opt:stage, self:custom.defaultStage}}
+  # READ a frequency
+  getFrequency:
+    handler: src/frequency/get.getFrequency
+    events:
+      - http:
+          method: get
+          path: frequency/{id}
+          cors: true
+          authorizer:
+            arn: ${self:custom.authorizer.${opt:stage, self:custom.defaultStage}}
+  # UPDATE a frequency
+  updateFrequency:
+    handler: src/frequency/put.updateFrequency
+    events:
+      - http:
+          method: put
+          path: frequency/{id}
+          cors: true
+          authorizer:
+            arn: ${self:custom.authorizer.${opt:stage, self:custom.defaultStage}}
+  # DELETE a frequency
+  deleteFrequency:
+    handler: src/frequency/delete.deleteFrequency
+    events:
+      - http:
+          method: delete
+          path: frequency/{id}
+          cors: true
+          authorizer:
+            arn: ${self:custom.authorizer.${opt:stage, self:custom.defaultStage}}
+
+  # /generation
+
+  # LIST all generations
+  listGenerations:
+    handler: src/generation/get.listGenerations
+    events:
+      - http:
+          method: get
+          path: generation
+          cors: true
+          authorizer:
+            arn: ${self:custom.authorizer.${opt:stage, self:custom.defaultStage}}
+  # CREATE a generation
+  createGeneration:
+    handler: src/generation/post.createGeneration
+    events:
+      - http:
+          method: post
+          path: generation
+          cors: true
+          authorizer:
+            arn: ${self:custom.authorizer.${opt:stage, self:custom.defaultStage}}
+  # READ a generation
+  getGeneration:
+    handler: src/generation/get.getGeneration
+    events:
+      - http:
+          method: get
+          path: generation/{id}
+          cors: true
+          authorizer:
+            arn: ${self:custom.authorizer.${opt:stage, self:custom.defaultStage}}
+  # UPDATE a generation
+  updateGeneration:
+    handler: src/generation/put.updateGeneration
+    events:
+      - http:
+          method: put
+          path: generation/{id}
+          cors: true
+          authorizer:
+            arn: ${self:custom.authorizer.${opt:stage, self:custom.defaultStage}}
+  # DELETE a generation
+  deleteGeneration:
+    handler: src/generation/delete.deleteGeneration
+    events:
+      - http:
+          method: delete
+          path: generation/{id}
+          cors: true
+          authorizer:
+            arn: ${self:custom.authorizer.${opt:stage, self:custom.defaultStage}}
+
+  # /technology
+
+  # LIST all technologies
+  listTechnologies:
+    handler: src/technology/get.listTechnologies
+    events:
+      - http:
+          method: get
+          path: technology
+          cors: true
+          authorizer:
+            arn: ${self:custom.authorizer.${opt:stage, self:custom.defaultStage}}
+  # CREATE a technology
+  createTechnology:
+    handler: src/technology/post.createTechnology
+    events:
+      - http:
+          method: post
+          path: technology
+          cors: true
+          authorizer:
+            arn: ${self:custom.authorizer.${opt:stage, self:custom.defaultStage}}
+  # READ a technology
+  getTechnology:
+    handler: src/technology/get.getTechnology
+    events:
+      - http:
+          method: get
+          path: technology/{id}
+          cors: true
+          authorizer:
+            arn: ${self:custom.authorizer.${opt:stage, self:custom.defaultStage}}
+  # UPDATE a technology
+  updateTechnology:
+    handler: src/technology/put.updateTechnology
+    events:
+      - http:
+          method: put
+          path: technology/{id}
+          cors: true
+          authorizer:
+            arn: ${self:custom.authorizer.${opt:stage, self:custom.defaultStage}}
+  # DELETE a technology
+  deleteTechnology:
+    handler: src/technology/delete.deleteTechnology
+    events:
+      - http:
+          method: delete
+          path: technology/{id}
+          cors: true
+          authorizer:
+            arn: ${self:custom.authorizer.${opt:stage, self:custom.defaultStage}}
+
+  # /operator
+
+  # LIST all operators
+  listOperators:
+    handler: src/operator/get.listOperators
+    events:
+      - http:
+          method: get
+          path: operator
+          cors: true
+          authorizer:
+            arn: ${self:custom.authorizer.${opt:stage, self:custom.defaultStage}}
+  # CREATE an operator
+  createOperator:
+    handler: src/operator/post.createOperator
+    events:
+      - http:
+          method: post
+          path: operator
+          cors: true
+          authorizer:
+            arn: ${self:custom.authorizer.${opt:stage, self:custom.defaultStage}}
+  # READ an operator
+  getOperator:
+    handler: src/operator/get.getOperator
+    events:
+      - http:
+          method: get
+          path: operator/{id}
+          cors: true
+          authorizer:
+            arn: ${self:custom.authorizer.${opt:stage, self:custom.defaultStage}}
+  # UPDATE an operator
+  updateOperator:
+    handler: src/operator/put.updateOperator
+    events:
+      - http:
+          method: put
+          path: operator/{id}
+          cors: true
+          authorizer:
+            arn: ${self:custom.authorizer.${opt:stage, self:custom.defaultStage}}
+  # DELETE an operator
+  deleteOperator:
+    handler: src/operator/delete.deleteOperator
+    events:
+      - http:
+          method: delete
+          path: operator/{id}
+          cors: true
+          authorizer:
+            arn: ${self:custom.authorizer.${opt:stage, self:custom.defaultStage}}
+
+  # /phone
+
+  # LIST a phone
+  listPhones:
+    handler: src/phone/get.listPhones
+    events:
+      - http:
+          method: get
+          path: phone
+          cors: true
+          authorizer:
+            arn: ${self:custom.authorizer.${opt:stage, self:custom.defaultStage}}
+  # CREATE a phone
+  createPhone:
+    handler: src/phone/post.createPhone
+    events:
+      - http:
+          method: post
+          path: phone
+          cors: true
+          authorizer:
+            arn: ${self:custom.authorizer.${opt:stage, self:custom.defaultStage}}
+  # READ a phone
+  getPhone:
+    handler: src/phone/get.getPhone
+    events:
+      - http:
+          method: get
+          path: phone/{id}
+          cors: true
+          authorizer:
+            arn: ${self:custom.authorizer.${opt:stage, self:custom.defaultStage}}
+  # UPDATE a phone
+  updatePhone:
+    handler: src/phone/put.updatePhone
+    events:
+      - http:
+          method: put
+          path: phone/{id}
+          cors: true
+          authorizer:
+            arn: ${self:custom.authorizer.${opt:stage, self:custom.defaultStage}}
+  # DELETE a phone
+  deletePhone:
+    handler: src/phone/delete.deletePhone
+    events:
+      - http:
+          method: delete
+          path: phone/{id}
+          cors: true
+          authorizer:
+            arn: ${self:custom.authorizer.${opt:stage, self:custom.defaultStage}}
+
+  # /variant
+  # CREATE a variant
+  createVariant:
+    handler: src/variant/post.createVariant
+    events:
+      - http:
+          method: post
+          path: variant
+          cors: true
+          authorizer:
+            arn: ${self:custom.authorizer.${opt:stage, self:custom.defaultStage}}
+  # READ a variant (NOT USED)
+  # UPDATE a variant
+  updateVariant:
+    handler: src/variant/put.updateVariant
+    events:
+      - http:
+          method: put
+          path: variant/{phoneId}/{variantId}
+          cors: true
+          authorizer:
+            arn: ${self:custom.authorizer.${opt:stage, self:custom.defaultStage}}
+  # DELETE a variant
+  deleteVariant:
+    handler: src/variant/delete.deleteVariant
+    events:
+      - http:
+          method: delete
+          path: variant/{phoneId}/{variantId}
+          cors: true
+          authorizer:
+            arn: ${self:custom.authorizer.${opt:stage, self:custom.defaultStage}}
+
+  # /login
+
+  # Login the user
+  loginUser:
+    handler: src/login/post.loginUser
+    events:
+      - http:
+          method: post
+          path: login
+          cors: true
+  # Refresh the idToken using the refreshToken
+  refreshToken:
+    handler: src/login/post.refreshToken
+    events:
+      - http:
+          method: post
+          path: refresh
+          cors: true
+
+  # /search
+
+  # Autocomplete the phone
+  autocomplete:
+    handler: src/search/get.autocomplete
+    events:
+      - http:
+          method: get
+          path: search/autocomplete
+          cors: true
+
+  # Get the enabled operators and their IDs
+  operators:
+    handler: src/search/get.operators
+    events:
+      - http:
+          method: get
+          path: search/operators
+          cors: true
+
+  # Compare a phone variant and an operator to see if they are compatible
+  compare:
+    handler: src/search/post.compare
+    events:
+      - http:
+          method: post
+          path: search/compare
+          cors: true
 
 # Resources
 resources:
@@ -67,9 +419,8 @@ resources:
             KeyType: HASH
           - AttributeName: SK
             KeyType: RANGE
-        ProvisionedThroughput:
-          ReadCapacityUnits: 5
-          WriteCapacityUnits: 5
+        BillingMode: PAY_PER_REQUEST
+
     # Phones table
     phonesTable:
       Type: AWS::DynamoDB::Table
@@ -86,9 +437,8 @@ resources:
             KeyType: HASH
           - AttributeName: SK
             KeyType: RANGE
-        ProvisionedThroughput:
-          ReadCapacityUnits: 5
-          WriteCapacityUnits: 5
+        BillingMode: PAY_PER_REQUEST
+
     # Operator table
     operatorsTable:
       Type: AWS::DynamoDB::Table
@@ -105,9 +455,8 @@ resources:
             KeyType: HASH
           - AttributeName: SK
             KeyType: RANGE
-        ProvisionedThroughput:
-          ReadCapacityUnits: 5
-          WriteCapacityUnits: 5
+        BillingMode: PAY_PER_REQUEST
+
     # Users table
     usersTable:
       Type: AWS::DynamoDB::Table
@@ -124,14 +473,15 @@ resources:
             KeyType: HASH
           - AttributeName: SK
             KeyType: RANGE
-        ProvisionedThroughput:
-          ReadCapacityUnits: 5
-          WriteCapacityUnits: 5
+        BillingMode: PAY_PER_REQUEST
 
     ## COGNITO USER POOLS
 
 
+
+# Plugins
 plugins:
   - serverless-dynamodb-local
+  - serverless-bundle
   - serverless-offline
   - serverless-offline-dotenv

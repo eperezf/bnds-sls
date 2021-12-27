@@ -88,3 +88,9 @@ typings/
 .dynamodb/
 
 .DS_Store
+
+.webpack/*
+
+.env.production
+
+.env.offline
