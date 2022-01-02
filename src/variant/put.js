@@ -38,9 +38,10 @@ export const updateVariant = async (event) => {
         PK: "PHONE#"+phoneId,
         SK: "VARIANT#"+variantId
       },
-      UpdateExpression: "set #n = :n, #e = :e, #t = :t, #f = :f",
+      UpdateExpression: "set #n = :n, #c = :c, #e = :e, #t = :t, #f = :f",
       ExpressionAttributeValues: {
         ":n": data.name,
+        ":c": data.comment,
         ":e": data.enabled,
         ":t": data.technologies,
         ":f": data.frequencies,

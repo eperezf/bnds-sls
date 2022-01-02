@@ -43,6 +43,7 @@ export const createVariant = async (event) => {
           SK: "VARIANT#"+id,
           name: data.name,
           enabled: data.enabled,
+          comment: data.comment,
           technologies: data.technologies,
           frequencies: data.frequencies
         }
