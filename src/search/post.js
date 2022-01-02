@@ -291,8 +291,10 @@ export const compare = async (event) => {
       res.phone = {
         brand: phone.brand,
         model: phone.model,
+        phoneComment: phone.comment,
         variant: variant.name,
         review: phone.review,
+        variantComment: variant.comment,
         image: phones[0].phoneId+".png",
         exactMach: exactMach
       };

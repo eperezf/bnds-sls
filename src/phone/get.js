@@ -112,6 +112,7 @@ export const getPhone = async (event) => {
           phoneData.id = phone.PK.replace("PHONE#","");
           phoneData.brand = phone.brand;
           phoneData.model = phone.model;
+          phoneData.comment = phone.comment;
           phoneData.review = phone.review;
           phoneData.enabled = phone.enabled;
         }
