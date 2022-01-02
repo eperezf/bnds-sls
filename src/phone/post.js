@@ -53,7 +53,7 @@ export const createPhone = async (event) => {
         brand: data.brand,
         model: data.model,
         review: data.review,
-        comment: data.comment
+        comment: data.comment,
         enabled: data.enabled,
       }
     };
