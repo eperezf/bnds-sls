@@ -49,6 +49,7 @@ export const updateVariant = async (event) => {
       },
       ExpressionAttributeNames: {
         "#n": "name",
+        "#c": "comment",
         "#e": "enabled",
         "#t": "technologies",
         "#f": "frequencies",
