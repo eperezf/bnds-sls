@@ -109,19 +109,23 @@ export const compare = async (event) => {
       params = {
         index: process.env.OPENSEARCH_VARIANT_INDEX,
         body: {
-          'query': {
-            'bool': {
-              'must': [
+          "query": {
+            "bool": {
+              "must": [
                 {
-                  'match': {
-                    'fullName': {
-                      'query': data.phone,
-                      'analyzer': 'standard'
+                  "match": {
+                    "fullName": {
+                      "query": data.phone,
+                      "analyzer": "pattern"
                     }
                   }
                 },
                 {
-                  term: {"enabled": true}
+                  "term": {
+                    "enabled": {
+                      "value": "true"
+                    }
+                  }
                 }
               ]
             }
