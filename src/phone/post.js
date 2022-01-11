@@ -43,6 +43,11 @@ export const createPhone = async (event) => {
     if (!data.enabled) {
       data.enabled = false;
     }
+    // Quick fix for undefined comment
+    if (!data.comment) {
+      data.comment = "";
+    }
+
     // Try saving the phone
     let id = nanoid(6);
     let params = {

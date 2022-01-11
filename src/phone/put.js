@@ -36,6 +36,11 @@ export const updatePhone = async (event) => {
   if (!data.review) {
     data.review = "";
   }
+  // Quick fix for undefined comment
+  if (!data.comment) {
+    data.comment = "";
+  }
+
   try {
     let params = {
       TableName: tableName,
