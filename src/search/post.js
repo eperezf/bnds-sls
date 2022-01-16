@@ -123,7 +123,7 @@ export const compare = async (event) => {
                 {
                   "term": {
                     "enabled": {
-                      "value": "true"
+                      "value": true
                     }
                   }
                 }
