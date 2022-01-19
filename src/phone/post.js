@@ -43,6 +43,11 @@ export const createPhone = async (event) => {
     if (!data.enabled) {
       data.enabled = false;
     }
+    // Quick fix for undefined comment
+    if (!data.comment) {
+      data.comment = "";
+    }
+
     // Try saving the phone
     let id = nanoid(6);
     let params = {
@@ -53,6 +58,7 @@ export const createPhone = async (event) => {
         brand: data.brand,
         model: data.model,
         review: data.review,
+        comment: data.comment,
         enabled: data.enabled,
       }
     };

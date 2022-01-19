@@ -33,9 +33,15 @@ export const updatePhone = async (event) => {
 
   var data = JSON.parse(event.body);
   var id = event.pathParameters.id;
+
   if (!data.review) {
     data.review = "";
   }
+  // Quick fix for undefined comment
+  if (!data.comment) {
+    data.comment = "";
+  }
+
   try {
     let params = {
       TableName: tableName,
@@ -43,11 +49,12 @@ export const updatePhone = async (event) => {
         PK: "PHONE#"+id,
         SK: "DATA"
       },
-      UpdateExpression: "set #b = :b, #m = :m, #r = :r, #e = :e",
+      UpdateExpression: "set #b = :b, #m = :m, #r = :r, #c = :c, #e = :e",
       ExpressionAttributeValues: {
         ":b": data.brand,
         ":m": data.model,
         ":r": data.review,
+        ":c": data.comment,
         ":e": data.enabled,
         ":id": "PHONE#"+id
       },
@@ -55,6 +62,7 @@ export const updatePhone = async (event) => {
         "#b": "brand",
         "#m": "model",
         "#r": "review",
+        "#c": "comment",
         "#e": "enabled",
       },
       ReturnValues: "UPDATED_NEW",
@@ -63,7 +71,6 @@ export const updatePhone = async (event) => {
     };
     var operatorUpdate = await docClient.update(params);
     result = operatorUpdate;
-
     await osClient.update({
       index: process.env.OPENSEARCH_PHONE_INDEX,
       id: id,

@@ -65,6 +65,7 @@ export const compare = async (event) => {
     var generations = [];
     var frequencies = [];
     var exactMach = false;
+    var selectedPhone = {};
 
     if (!error) {
       // Get the operator
@@ -109,19 +110,23 @@ export const compare = async (event) => {
       params = {
         index: process.env.OPENSEARCH_VARIANT_INDEX,
         body: {
-          'query': {
-            'bool': {
-              'must': [
+          "query": {
+            "bool": {
+              "must": [
                 {
-                  'match': {
-                    'fullName': {
-                      'query': data.phone,
-                      'analyzer': 'standard'
+                  "match": {
+                    "fullName": {
+                      "query": data.phone,
+                      "analyzer": "pattern"
                     }
                   }
                 },
                 {
-                  term: {"enabled": true}
+                  "term": {
+                    "enabled": {
+                      "value": true
+                    }
+                  }
                 }
               ]
             }
@@ -139,7 +144,18 @@ export const compare = async (event) => {
         for (var hit of response.body.hits.hits) {
           phones.push({name:hit._source.fullName, phoneId: hit._source.phone, variantId: hit._id});
         }
-        // Check if it's an exact match
+
+        // Sometimes OpenSearch won't put the correct result with the highest score.
+        // We'll have to do a dirty quick fix for now.
+        // Check if any of the phones is an exact match and save it to a new var.
+        selectedPhone = phones.find(o => o.name === data.phone);
+        if (selectedPhone) {
+          console.log("EXACT MATCH!");
+          exactMach = true;
+        } else {
+          selectedPhone = phones[0];
+        }
+
         if (phones[0].name == data.phone) {
           exactMach = true;
         }
@@ -158,7 +174,7 @@ export const compare = async (event) => {
       params = {
         TableName: tableName,
         Key: {
-          "PK": "PHONE#"+phones[0].phoneId,
+          "PK": "PHONE#"+selectedPhone.phoneId,
           "SK": "DATA"
         }
       };
@@ -179,8 +195,8 @@ export const compare = async (event) => {
       params = {
         TableName: tableName,
         Key: {
-          "PK": "PHONE#"+phones[0].phoneId,
-          "SK": "VARIANT#"+phones[0].variantId
+          "PK": "PHONE#"+selectedPhone.phoneId,
+          "SK": "VARIANT#"+selectedPhone.variantId
         }
       };
       try {
@@ -291,8 +307,10 @@ export const compare = async (event) => {
       res.phone = {
         brand: phone.brand,
         model: phone.model,
+        phoneComment: phone.comment,
         variant: variant.name,
         review: phone.review,
+        variantComment: variant.comment,
         image: phones[0].phoneId+".png",
         exactMach: exactMach
       };

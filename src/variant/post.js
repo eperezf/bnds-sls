@@ -28,6 +28,11 @@ export const createVariant = async (event) => {
     status = 500;
   }
 
+  // Quick fix for undefined comment
+  if (!data.comment) {
+    data.comment = "";
+  }
+
   // Try saving the variant in DynamoDB
   if (!error) {
     try {
@@ -43,6 +48,7 @@ export const createVariant = async (event) => {
           SK: "VARIANT#"+id,
           name: data.name,
           enabled: data.enabled,
+          comment: data.comment,
           technologies: data.technologies,
           frequencies: data.frequencies
         }

@@ -30,6 +30,11 @@ export const updateVariant = async (event) => {
   var phoneId = event.pathParameters.phoneId;
   var variantId = event.pathParameters.variantId;
 
+  // Quick fix for undefined comment
+  if (!data.comment) {
+    data.comment = "";
+  }
+
   // Try updating variant in DynamoDB
   try {
     let params = {
@@ -38,9 +43,10 @@ export const updateVariant = async (event) => {
         PK: "PHONE#"+phoneId,
         SK: "VARIANT#"+variantId
       },
-      UpdateExpression: "set #n = :n, #e = :e, #t = :t, #f = :f",
+      UpdateExpression: "set #n = :n, #c = :c, #e = :e, #t = :t, #f = :f",
       ExpressionAttributeValues: {
         ":n": data.name,
+        ":c": data.comment,
         ":e": data.enabled,
         ":t": data.technologies,
         ":f": data.frequencies,
@@ -48,6 +54,7 @@ export const updateVariant = async (event) => {
       },
       ExpressionAttributeNames: {
         "#n": "name",
+        "#c": "comment",
         "#e": "enabled",
         "#t": "technologies",
         "#f": "frequencies",

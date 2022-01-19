@@ -30,7 +30,11 @@ export const autocomplete = async (event) => {
               }
             },
             {
-              term: {"enabled": true}
+              "term": {
+                "enabled": {
+                  "value": true
+                }
+              }
             }
           ]
         }
