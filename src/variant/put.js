@@ -30,6 +30,11 @@ export const updateVariant = async (event) => {
   var phoneId = event.pathParameters.phoneId;
   var variantId = event.pathParameters.variantId;
 
+  // Quick fix for undefined comment
+  if (!data.comment) {
+    data.comment = "";
+  }
+
   // Try updating variant in DynamoDB
   try {
     let params = {

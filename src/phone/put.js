@@ -33,9 +33,15 @@ export const updatePhone = async (event) => {
 
   var data = JSON.parse(event.body);
   var id = event.pathParameters.id;
+
   if (!data.review) {
     data.review = "";
   }
+  // Quick fix for undefined comment
+  if (!data.comment) {
+    data.comment = "";
+  }
+
   try {
     let params = {
       TableName: tableName,
@@ -65,7 +71,6 @@ export const updatePhone = async (event) => {
     };
     var operatorUpdate = await docClient.update(params);
     result = operatorUpdate;
-
     await osClient.update({
       index: process.env.OPENSEARCH_PHONE_INDEX,
       id: id,
