@@ -34,23 +34,15 @@ export const updatePhone = async (event) => {
   var data = JSON.parse(event.body);
   var id = event.pathParameters.id;
 
-  console.log("Data to be updated:");
-  console.log(data);
-  console.log("Phone ID:");
-  console.log(id);
-
   if (!data.review) {
-    console.log("No Review data");
     data.review = "";
   }
   // Quick fix for undefined comment
   if (!data.comment) {
-    console.log("No comment data");
     data.comment = "";
   }
 
   try {
-    console.log("Updating phone in DynamoDB");
     let params = {
       TableName: tableName,
       Key: {
@@ -79,7 +71,6 @@ export const updatePhone = async (event) => {
     };
     var operatorUpdate = await docClient.update(params);
     result = operatorUpdate;
-    console.log("Updating phone in OpenSearch");
     await osClient.update({
       index: process.env.OPENSEARCH_PHONE_INDEX,
       id: id,
@@ -101,7 +92,6 @@ export const updatePhone = async (event) => {
 
   // Try update the variants
   try {
-    console.log("Updating variants in OpenSearch");
     await osClient.update_by_query({
       index: process.env.OPENSEARCH_VARIANT_INDEX,
       body: {
@@ -133,7 +123,6 @@ export const updatePhone = async (event) => {
 
   // Try to create signed URL for S3
   try {
-    console.log("Creating S3 Signed URL");
     // Create the S3 command
     const command = new PutObjectCommand({
       Bucket:process.env.AWS_S3_BUCKET_NAME,
