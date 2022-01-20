@@ -12,6 +12,8 @@ export const updatePhone = async (event) => {
   var message = "ok";
   var error = false;
   var result = {};
+  var editor = event.requestContext.authorizer.claims.email;
+  var timestamp = Date.now();
 
   // Configure DynamoDB
   const tableName = "phones-"+process.env.NODE_ENV;
@@ -49,13 +51,15 @@ export const updatePhone = async (event) => {
         PK: "PHONE#"+id,
         SK: "DATA"
       },
-      UpdateExpression: "set #b = :b, #m = :m, #r = :r, #c = :c, #e = :e",
+      UpdateExpression: "set #b = :b, #m = :m, #r = :r, #c = :c, #e = :e, #uu = :uu, #ud = :ud",
       ExpressionAttributeValues: {
         ":b": data.brand,
         ":m": data.model,
         ":r": data.review,
         ":c": data.comment,
         ":e": data.enabled,
+        ":uu": editor,
+        ":ud": timestamp,
         ":id": "PHONE#"+id
       },
       ExpressionAttributeNames: {
@@ -64,6 +68,8 @@ export const updatePhone = async (event) => {
         "#r": "review",
         "#c": "comment",
         "#e": "enabled",
+        "#uu": "updatedBy",
+        "#ud": "updatedAt"
       },
       ReturnValues: "UPDATED_NEW",
       ConditionExpression: "PK=:id",
