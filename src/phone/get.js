@@ -115,6 +115,10 @@ export const getPhone = async (event) => {
           phoneData.comment = phone.comment;
           phoneData.review = phone.review;
           phoneData.enabled = phone.enabled;
+          phoneData.createdBy = phone.createdBy;
+          phoneData.createdAt = phone.createdAt;
+          phoneData.updatedBy = phone.updatedBy;
+          phoneData.updatedAt = phone.updatedAt;
         }
         else if (phone.SK.startsWith("VARIANT")) {
           phone.id = phone.SK.replace("VARIANT#","");

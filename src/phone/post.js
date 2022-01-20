@@ -12,6 +12,8 @@ export const createPhone = async (event) => {
   var result = {};
   var error = false;
   const data = JSON.parse(event.body);
+  var editor = event.requestContext.authorizer.claims.email;
+  var timestamp = Date.now();
 
   // Configure DynamoDB
   const tableName = "phones-"+process.env.NODE_ENV;
@@ -60,6 +62,10 @@ export const createPhone = async (event) => {
         review: data.review,
         comment: data.comment,
         enabled: data.enabled,
+        createdAt: timestamp,
+        createdBy: editor,
+        updatedAt: timestamp,
+        updatedBy: editor
       }
     };
     // Save the phone in DynamoDB
