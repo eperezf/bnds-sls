@@ -36,10 +36,17 @@ export const compare = async (event) => {
     status = 403;
   }
 
-  if (data.operator.length!= 6) {
+  // Check that the operator is in the POST and it's a valid ID
+  if (!data.operator) {
     error = true;
-    message = "Invalid operator";
+    message = "Invalid Operator";
     status = 500;
+  } else {
+    if (data.operator.length!= 6) {
+      error = true;
+      message = "Invalid operator";
+      status = 500;
+    }
   }
 
   if (data.phone == "") {
