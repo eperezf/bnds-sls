@@ -24,13 +24,13 @@
     "@aws-sdk/s3-request-presigner": "^3.37.0",
     "@opensearch-project/opensearch": "^1.0.0",
     "amazon-cognito-identity-js": "^5.2.0",
-    "axios": "^0.24.0",
-    "nanoid": "^2.1.11"
+    "axios": "^1.20.0",
+    "nanoid": "^6.0.2"
   },
   "devDependencies": {
     "serverless-bundle": "^5.0.0",
     "serverless-dynamodb-local": "^0.2.4",
-    "serverless-offline": "^8.2.0",
+    "serverless-offline": "^14.8.4",
     "serverless-offline-dotenv": "^0.4.0"
   },
   "jshintConfig": {
